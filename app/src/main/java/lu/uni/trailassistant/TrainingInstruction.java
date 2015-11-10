@@ -9,6 +9,7 @@ public class TrainingInstruction {
 
     // running distance
     private int distance;
+    // duration of the training instruction
     private int duration = 0;
     private TrainingMode trainingMode;
 }
