@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">TrailAssistant</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_free_trail">FreeTrailActivity</string>
+    <string name="title_activity_predefined_route">PredefinedRouteActivity</string>
 </resources>

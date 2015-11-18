@@ -1,5 +1,6 @@
 package lu.uni.trailassistant;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -10,14 +11,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 /**
- * aslkdhflaksjlkasdfjalsk
+ * Activity for the first screen presented to the user
+ * The user can choose between two options: Predefined Route or Free Trail
  */
-public class TrailAssistantMain extends AppCompatActivity {
+public class StartScreenActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_trail_assistant_main);
+        setContentView(R.layout.activity_start_screen);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -51,5 +53,15 @@ public class TrailAssistantMain extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onFreeTrailChosen(View view){
+        Intent intent = new Intent(this, FreeTrailActivity.class);
+        startActivity(intent);
+    }
+
+    public void onPredefinedRouteChosen(View view){
+        Intent intent = new Intent(this, PredefinedRouteActivity.class);
+        startActivity(intent);
     }
 }
