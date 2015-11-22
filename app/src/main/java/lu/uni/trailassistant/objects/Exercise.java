@@ -4,10 +4,10 @@ package lu.uni.trailassistant.objects;
  * Created by GOMES Leandro on 07.11.15.
  *
  */
-public abstract class Activity {
+public abstract class Exercise {
     private String activityName;
 
-    public Activity(String activityName) {
+    public Exercise(String activityName) {
         this.activityName = activityName;
     }
 

@@ -6,3 +6,5 @@
 /build
 /captures
 app/.gitignore
+google-services.json
+app/src/main/AndroidManifest.xml
