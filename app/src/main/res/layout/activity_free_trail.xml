@@ -15,6 +15,6 @@
         android:id="@+id/map"
         tools:context=".FreeTrailActivity"
         android:name="com.google.android.gms.maps.SupportMapFragment"
-        />
+        android:layout_alignParentBottom="true" />
 
 </RelativeLayout>
