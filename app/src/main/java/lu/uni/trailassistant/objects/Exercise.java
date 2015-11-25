@@ -5,14 +5,14 @@ package lu.uni.trailassistant.objects;
  *
  */
 public abstract class Exercise {
-    private String activityName;
+    protected String exerciseName;
 
-    public Exercise(String activityName) {
-        this.activityName = activityName;
+    public Exercise(String exerciseName) {
+        this.exerciseName = exerciseName;
     }
 
-    public String getActivityName() { return activityName; }
-    public void setActivityName(String activityName) { this.activityName = activityName; }
+    public String getExerciseName() { return exerciseName; }
+    public void setExerciseName(String exerciseName) { this.exerciseName = exerciseName; }
 
     @Override
     public abstract String toString();
