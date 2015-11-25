@@ -1,11 +1,18 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'trailassistantkeystore'
+            keyPassword 'trailassistant'
+            storeFile file('/Users/Jo/Documents/keystore/trailassistant.keystore.jks')
+            storePassword 'trailassistant'
+        }
+    }
     compileSdkVersion 23
     buildToolsVersion "23.0.1"
-
     defaultConfig {
-        applicationId "com.joschimberg.trailassistant"
+        applicationId "lu.uni.trailassistant"
         minSdkVersion 10
         targetSdkVersion 23
         versionCode 1
@@ -15,6 +22,9 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            signingConfig signingConfigs.config
         }
     }
 }
@@ -27,4 +37,7 @@ dependencies {
     compile 'com.google.android.gms:play-services-auth:8.3.0'
     // Google Maps
     compile 'com.google.android.gms:play-services-maps:8.3.0'
+
+    // Google Directions
+    compile 'com.github.jd-alexander:library:1.0.7'
 }
