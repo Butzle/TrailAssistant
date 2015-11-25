@@ -25,8 +25,11 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 // http://stackoverflow.com/questions/16005223/android-google-map-api-v2-current-location
 
-/* TODO
-    examine what this class exactly does (copied and modified it a little bit from stackoverflow)
+/*
+ * TODO examine what this class exactly does (copied and modified it a little bit from stackoverflow)
+ */
+/*
+TODO what happens if the user pushes app to backround?
  */
 
 public class FreeTrailActivity extends FragmentActivity {
@@ -106,6 +109,7 @@ public class FreeTrailActivity extends FragmentActivity {
                 drawMarker(location);
             }
 
+            // TODO check method 200000 => time and 0 => after so many meters?
             locationManager.requestLocationUpdates(provider,20000,0,locationListener);
         }
     }
