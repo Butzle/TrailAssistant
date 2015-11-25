@@ -1,8 +1,10 @@
-package lu.uni.trailassistant;
+package lu.uni.trailassistant.activities;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+
+import lu.uni.trailassistant.R;
 
 public class CreateNewTrainingProgramActivity extends AppCompatActivity {
 

@@ -10,13 +10,13 @@ public class RunningExercise extends Exercise {
     private int distance;
     private GPSCoord destinationCoord;
 
-    public RunningExercise(String activityName, int distance, GPSCoord destinationCoord) {
-        super(activityName);
+    public RunningExercise(String exerciseName, int distance, GPSCoord destinationCoord) {
+        super(exerciseName);
         this.distance = distance;
         this.destinationCoord = destinationCoord;
     }
 
     public String toString() {
-        return "Distance=" + distance + ", Speed mode=" + speedMode + ", Destination GPS coordinates: (" + destinationCoord.toString() + ")";
+        return "[Running exercise] Name: "+ exerciseName + ", Distance=" + distance + ", Speed mode=" + speedMode + ", Destination GPS coordinates: (" + destinationCoord.toString() + ")";
     }
 }

@@ -1,4 +1,4 @@
-package lu.uni.trailassistant;
+package lu.uni.trailassistant.activities;
 
 
 import android.Manifest;
@@ -21,6 +21,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import lu.uni.trailassistant.R;
 
 
 // http://stackoverflow.com/questions/16005223/android-google-map-api-v2-current-location

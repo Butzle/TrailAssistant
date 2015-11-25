@@ -1,4 +1,4 @@
-package lu.uni.trailassistant;
+package lu.uni.trailassistant.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +11,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import lu.uni.trailassistant.R;
 
 
 public class GoogleMapsDefineRouteActivity extends FragmentActivity implements OnMapReadyCallback {

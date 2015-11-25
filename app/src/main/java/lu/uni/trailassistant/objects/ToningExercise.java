@@ -9,14 +9,14 @@ public class ToningExercise extends Exercise {
     private int repetitions;
     private EXERCISE_MODE exerciseMode;
 
-    public ToningExercise(String activityName, int duration, int repetitions, EXERCISE_MODE exerciseMode) {
-        super(activityName);
+    public ToningExercise(String exerciseName, int duration, int repetitions, EXERCISE_MODE exerciseMode) {
+        super(exerciseName);
         this.duration = duration;
         this.repetitions = repetitions;
         this.exerciseMode = exerciseMode;
     }
 
     public String toString() {
-        return "Duration=" + duration + ", Repetitions=" + repetitions + ", Exercise mode=" + exerciseMode;
+        return "[Toning exercise] Name: " + exerciseName + ", Duration=" + duration + ", Repetitions=" + repetitions + ", Exercise mode=" + exerciseMode;
     }
 }
