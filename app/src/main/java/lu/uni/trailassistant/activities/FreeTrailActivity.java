@@ -31,7 +31,7 @@ import lu.uni.trailassistant.R;
  * TODO examine what this class exactly does (copied and modified it a little bit from stackoverflow)
  */
 /*
-TODO what happens if the user pushes app to backround?
+TODO what happens if the user pushes app to background?
  */
 
 public class FreeTrailActivity extends FragmentActivity {
