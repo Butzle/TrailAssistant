@@ -39,13 +39,13 @@ import lu.uni.trailassistant.R;
 TODO what happens if the user pushes app to background?
  */
 
-public class FreeTrailActivity extends FragmentActivity{
+public class FreeTrailActivity extends AbstractRouteActivity{
 
-    GoogleMap map;
 
     // where the user is located when he starts the free trail activity. This will be taken as start
     // position for his training program.
     private Location startLocation;
+    private MarkerOptions startMarker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +62,6 @@ public class FreeTrailActivity extends FragmentActivity{
         map = fm.getMap();
 
         Context context = getApplicationContext();
-        Toast.makeText(context, "Test1234", Toast.LENGTH_SHORT).show();
 
         // get the start position
         LocationManager service = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -70,7 +69,6 @@ public class FreeTrailActivity extends FragmentActivity{
         // Getting LocationManager object from System Service LOCATION_SERVICE
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
-        // Creating a criteria object to retrieve provider
 
         // Getting the name of the best provider
         String provider = locationManager.getBestProvider(criteria, true);
@@ -85,17 +83,22 @@ public class FreeTrailActivity extends FragmentActivity{
             return;
         }
         setStartLocation(service.getLastKnownLocation(provider));
+        startMarker = new MarkerOptions().position(new LatLng(getStartLocation().getLatitude(), getStartLocation().getLongitude())).title("Start Position");
+        startMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.start_blue));
+        map.addMarker(startMarker);
+        CameraUpdate center=CameraUpdateFactory.newLatLng(new LatLng(getStartLocation().getLatitude(), getStartLocation().getLongitude()));
+        CameraUpdate zoom=CameraUpdateFactory.zoomTo(16);
+        map.moveCamera(center);
+        map.animateCamera(zoom);
 
 
-        Location location = locationManager.getLastKnownLocation(provider);
 
         LocationListener locationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
                 // redraw the markers when get location update.
                 drawMarker(location);
-                MarkerOptions start = new MarkerOptions().position(new LatLng(getStartLocation().getLatitude(), getStartLocation().getLongitude())).title("Start Position");
-                start.icon(BitmapDescriptorFactory.fromResource(R.drawable.start_blue));
-                map.addMarker(start);
+                map.addMarker(startMarker);
+                traceRoute(startMarker, new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude())).title("ME"));
             }
 
             @Override
@@ -113,10 +116,6 @@ public class FreeTrailActivity extends FragmentActivity{
 
             }
         };
-        if(location!=null){
-            //PLACE THE INITIAL MARKER
-            drawMarker(location);
-        }
 
         // TODO check method 200000 => time and 0 => after so many meters?
         locationManager.requestLocationUpdates(provider,20000,0,locationListener);
@@ -126,7 +125,7 @@ public class FreeTrailActivity extends FragmentActivity{
 
     private void drawMarker(Location location){
         // Remove any existing markers on the map
-        //map.clear();
+        map.clear();
         LatLng currentPosition = new LatLng(location.getLatitude(),location.getLongitude());
         map.addMarker(new MarkerOptions().position(currentPosition).title("ME"));
 
@@ -145,16 +144,5 @@ public class FreeTrailActivity extends FragmentActivity{
         return startLocation;
     }
 
-    /*private void traceRoute(MarkerOptions start, MarkerOptions currentPosition) {
-        // initialize an async. request using the direction api
-        Routing routing = new Routing.Builder()
-                .travelMode(Routing.TravelMode.WALKING)
-                .withListener(this)
-                .waypoints(start.getPosition(), currentPosition.getPosition())
-                .build();
-
-        // launch the request
-        routing.execute();
-    }*/
 
 }

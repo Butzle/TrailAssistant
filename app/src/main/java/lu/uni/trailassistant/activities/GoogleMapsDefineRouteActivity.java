@@ -32,14 +32,10 @@ import java.util.ArrayList;
 import lu.uni.trailassistant.R;
 
 
-public class GoogleMapsDefineRouteActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener, RoutingListener, GoogleMap.OnMapClickListener {
+public class GoogleMapsDefineRouteActivity extends AbstractRouteActivity implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener, RoutingListener, GoogleMap.OnMapClickListener {
 
-    private static final String TAG = "MapsActivity";
-
-    private GoogleMap map;
     private MarkerOptions origin;
     private MarkerOptions destination;
-    private ArrayList<Polyline> polylines;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,63 +131,10 @@ public class GoogleMapsDefineRouteActivity extends FragmentActivity implements O
         // add the marker to the map
         map.addMarker(destination);
 
-        // center the camera with a zoom of 15
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(destination.getPosition(), 15));
+        // center the camera with a zoom of 16
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(destination.getPosition(), 16));
     }
 
-    private void traceRoute(MarkerOptions origin, MarkerOptions destination) {
-        // initialize an async. request using the direction api
-        Routing routing = new Routing.Builder()
-                .travelMode(Routing.TravelMode.WALKING)
-                .withListener(this)
-                .waypoints(origin.getPosition(), destination.getPosition())
-                .build();
-
-        // launch the request
-        routing.execute();
-    }
-
-    @Override
-    public void onRoutingSuccess(ArrayList<Route> route, int shortestRouteIndex) {
-        // remove the previous polylines
-        if (polylines.size() > 0) {
-            for (Polyline poly : polylines) {
-                poly.remove();
-            }
-        }
-
-        // create a new array of polylines
-        polylines = new ArrayList<>();
-
-        // select the shortest path
-        Route path = route.get(shortestRouteIndex);
-
-        // add polylines to the map and the array
-        PolylineOptions polyOptions = new PolylineOptions();
-        polyOptions.color(R.color.colorPrimary);
-        polyOptions.width(13);
-        polyOptions.addAll(path.getPoints());
-        Polyline polyline = map.addPolyline(polyOptions);
-        polylines.add(polyline);
-
-        // log the distance and duration
-        Log.i(TAG, "[Route] distance: " + path.getDistanceText() + ", duration: " + path.getDurationValue() + " sec");
-    }
-
-    @Override
-    public void onRoutingFailure() {
-
-    }
-
-    @Override
-    public void onRoutingStart() {
-
-    }
-
-    @Override
-    public void onRoutingCancelled() {
-
-    }
 
     public float[] getDistanceBetweenTwoPoints(LatLng start, LatLng finish){
         if (finish != null && start != null) {
