@@ -77,6 +77,7 @@ public abstract class AbstractRouteActivity extends FragmentActivity implements 
 
     }
 
+    // trace the route of the user
     protected void traceRoute(MarkerOptions origin, MarkerOptions destination) {
         // initialize an async. request using the direction api
         Routing routing = new Routing.Builder()
