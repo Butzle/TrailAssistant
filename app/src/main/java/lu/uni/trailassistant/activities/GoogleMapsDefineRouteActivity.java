@@ -4,37 +4,31 @@ import android.Manifest;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import android.widget.Toast;
 
-import com.directions.route.RoutingListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import java.util.ArrayList;
 
 import lu.uni.trailassistant.R;
 
-
-public class GoogleMapsDefineRouteActivity extends AbstractRouteActivity implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener, RoutingListener, GoogleMap.OnMapClickListener, LocationListener {
+/*
+ * Current Location : http://stackoverflow.com/questions/16005223/android-google-map-api-v2-current-location
+ */
+public class GoogleMapsDefineRouteActivity extends AbstractRouteActivity implements GoogleMap.OnMapLongClickListener, GoogleMap.OnMapClickListener {
 
     private MarkerOptions origin;
     private MarkerOptions destination;
-    private LocationManager service;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,11 +36,8 @@ public class GoogleMapsDefineRouteActivity extends AbstractRouteActivity impleme
         setContentView(R.layout.activity_google_maps_define_route);
 
         // initialize object attributes
-        map = null;
         origin = null;
         destination = null;
-        polylines = new ArrayList<>();
-        service = null;
 
         // Getting Google Play availability status
         int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getBaseContext());
@@ -71,26 +62,9 @@ public class GoogleMapsDefineRouteActivity extends AbstractRouteActivity impleme
 
     @Override
     public void onMapReady(GoogleMap map) {
-        // setup the map attribute
-        this.map = map;
+        super.onMapReady(map);
         map.setOnMapLongClickListener(this);
         map.setOnMapClickListener(this);
-
-        service = (LocationManager) getSystemService(LOCATION_SERVICE);
-        Criteria criteria = new Criteria();
-        String provider = service.getBestProvider(criteria, true);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        // TODO check method 200000 => time and 0 => after so many meters?
-        service.requestLocationUpdates(provider, 20000, 0, this);
 
     }
 
@@ -169,50 +143,17 @@ public class GoogleMapsDefineRouteActivity extends AbstractRouteActivity impleme
     @Override
     public void onLocationChanged(Location location) {
         // redraw the markers when get location update.
-        Context context = getApplicationContext();
-        CharSequence text = "Hello toast!";
-        int duration = Toast.LENGTH_SHORT;
-
-        Toast toast = Toast.makeText(context, text, duration);
-        toast.show();
         if (origin == null) {
             LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
             origin = new MarkerOptions().position(userLocation).title("Origin");
             origin.icon(BitmapDescriptorFactory.fromResource(R.drawable.start_blue));
-            text = "Hello toast 2!";
-            duration = Toast.LENGTH_SHORT;
-
-            toast = Toast.makeText(context, text, duration);
-            toast.show();
             // add the marker to the map
             createOriginMarker();
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
                 return;
             }
             service.removeUpdates(this);
         }
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-
     }
 
 }
