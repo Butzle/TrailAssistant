@@ -13,11 +13,13 @@ public class TrainingProgram {
     private LinkedList<Exercise> exercisesQueue;
     private boolean showTrainingInstructions;   // TODO: do we still need this? not sure...
     GPSCoord startingCoord;
+    private String programName;
 
-    public TrainingProgram() {
+    public TrainingProgram(String programName) {
         exercisesQueue = new LinkedList<Exercise>();
         showTrainingInstructions = false;
         startingCoord = null;
+        this.programName = programName;
     }
 
     public void appendActivityToTail(Exercise activity) {
@@ -40,5 +42,13 @@ public class TrainingProgram {
     // returns a ListIterator object that can be used to traverse through the queue in proper order
     public ListIterator<Exercise> getQueueAsListIterator() {
         return exercisesQueue.listIterator();
+    }
+
+    public String getProgramName(){
+        return programName;
+    }
+
+    public void setProgramName(String programName){
+        this.programName = programName;
     }
 }
