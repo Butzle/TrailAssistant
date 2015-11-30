@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
+import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -24,6 +25,7 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -57,7 +59,7 @@ public abstract class AbstractRouteActivity extends FragmentActivity implements 
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
         if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-            // Toast.makeText(this, "GPS is Enabled in your devide", Toast.LENGTH_SHORT).show();
+            // Toast.makeText(this, "GPS is Enabled in your device", Toast.LENGTH_SHORT).show();
         }else{
             showGPSDisabledAlertToUser();
         }
@@ -88,7 +90,7 @@ public abstract class AbstractRouteActivity extends FragmentActivity implements 
     @Override
     public void onMapReady(GoogleMap map){
         this.map = map;
-        // Getting LocationManager object from System Service LOCATION_SERVICE
+        // GettingManager object from System Service LOCATION_SERVICE
         service = (LocationManager) getSystemService(LOCATION_SERVICE);
         Criteria criteria = new Criteria();
 
@@ -155,6 +157,18 @@ public abstract class AbstractRouteActivity extends FragmentActivity implements 
 
         // launch the request
         routing.execute();
+    }
+
+    public float[] getDistanceBetweenTwoPoints(LatLng start, LatLng finish) {
+        if (finish != null && start != null) {
+            // The computed distance is stored in results[0].
+            //If results has length 2 or greater, the initial bearing is stored in results[1].
+            //If results has length 3 or greater, the final bearing is stored in results[2].
+            float[] results = new float[1];
+            Location.distanceBetween(start.latitude, start.longitude, finish.latitude, finish.longitude, results);
+            return results;
+        }
+        return new float[]{0, 0};
     }
 
     @Override

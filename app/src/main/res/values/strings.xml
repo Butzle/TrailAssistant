@@ -5,4 +5,5 @@
     <string name="title_activity_predefined_route">Predefined Route</string>
     <string name="title_activity_google_maps_define_route">Google Maps Define Route</string>
     <string name="title_activity_create_new_training_program">Create New Training Program</string>
+
 </resources>

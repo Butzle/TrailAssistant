@@ -70,27 +70,31 @@ public class GoogleMapsDefineRouteActivity extends AbstractRouteActivity impleme
 
     @Override
     public void onMapClick(LatLng point) {
-        map.clear();
-        origin = new MarkerOptions().position(point).title("Origin");
-        origin.icon(BitmapDescriptorFactory.fromResource(R.drawable.start_blue));
-        createOriginMarker();
+        if(origin != null) {
+            map.clear();
+            origin = new MarkerOptions().position(point).title("Origin");
+            origin.icon(BitmapDescriptorFactory.fromResource(R.drawable.start_blue));
+            createOriginMarker();
+        }
     }
 
     @Override
     public void onMapLongClick(LatLng point) {
-        // remove all markers (origin and destination)
-        map.clear();
+        if(origin != null) {
+            // remove all markers (origin and destination)
+            map.clear();
 
-        // create the destination marker
-        destination = new MarkerOptions().position(point).title("Destination");
-        destination.icon(BitmapDescriptorFactory.fromResource(R.drawable.end_green));
+            // create the destination marker
+            destination = new MarkerOptions().position(point).title("Destination");
+            destination.icon(BitmapDescriptorFactory.fromResource(R.drawable.end_green));
 
-        // add both markers to the map
-        createOriginMarker();
-        createDestinationMarker();
+            // add both markers to the map
+            createOriginMarker();
+            createDestinationMarker();
 
-        // display the route and log the duration/distance
-        traceRoute(origin, destination);
+            // display the route and log the duration/distance
+            traceRoute(origin, destination);
+        }
     }
 
     private void createOriginMarker() {
@@ -118,17 +122,6 @@ public class GoogleMapsDefineRouteActivity extends AbstractRouteActivity impleme
     }
 
 
-    public float[] getDistanceBetweenTwoPoints(LatLng start, LatLng finish) {
-        if (finish != null && start != null) {
-            // The computed distance is stored in results[0].
-            //If results has length 2 or greater, the initial bearing is stored in results[1].
-            //If results has length 3 or greater, the final bearing is stored in results[2].
-            float[] results = new float[1];
-            Location.distanceBetween(start.latitude, start.longitude, finish.latitude, finish.longitude, results);
-            return results;
-        }
-        return new float[]{0, 0};
-    }
 
     public void createRoute(View view) {
         if (destination != null) {
