@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.directions.route.Routing;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.CameraUpdate;
@@ -25,6 +26,9 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+
+import java.util.ArrayList;
+import java.util.List;
 
 import lu.uni.trailassistant.R;
 
@@ -45,6 +49,7 @@ public class FreeTrailActivity extends AbstractRouteActivity{
     private MarkerOptions currentPosition;
     private TextView timerTextView;
     private Button startAndPauseButton;
+    private List<LatLng> waypoints;
     long startTime = 0;
     Handler timerHandler = new Handler();
 
@@ -70,6 +75,8 @@ public class FreeTrailActivity extends AbstractRouteActivity{
 
         startLocation = null;
         currentPosition = null;
+
+        waypoints = new ArrayList<LatLng>();
 
         timerTextView = (TextView) findViewById(R.id.timerTextView);
         startAndPauseButton = (Button) findViewById(R.id.start_pause_button);
@@ -124,8 +131,8 @@ public class FreeTrailActivity extends AbstractRouteActivity{
     private void showResultsToUser(){
         String distanceInKM;
         if(startMarker != null && currentPosition != null) {
-            float[] results = getDistanceBetweenTwoPoints(startMarker.getPosition(), currentPosition.getPosition());
-            float distanceInMeter = results[0] / 1000;        // total distance in
+            float distance = getDistanceBetweenTwoPoints(startMarker.getPosition(), currentPosition.getPosition());
+            float distanceInMeter = distance / 1000;        // total distance in
             distanceInKM = String.format("%.2f", distanceInMeter);
         } else {
             distanceInKM = "0,00";
@@ -162,6 +169,7 @@ public class FreeTrailActivity extends AbstractRouteActivity{
     public void onLocationChanged(Location location) {
         // redraw the markers when get location update.
         drawMarker(location);
+        waypoints.add(new LatLng(location.getLatitude(), location.getLongitude()));
         currentPosition = new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude())).title("Current Position");
         if(startMarker == null){
             startLocation = location;
@@ -177,7 +185,7 @@ public class FreeTrailActivity extends AbstractRouteActivity{
         }
         else {
             map.addMarker(startMarker);
-            traceRoute(startMarker, currentPosition);
+            traceRoute();
         }
     }
 
@@ -198,6 +206,19 @@ public class FreeTrailActivity extends AbstractRouteActivity{
 
     public Location getStartLocation(){
         return startLocation;
+    }
+
+    // trace the route of the user
+    protected void traceRoute() {
+        // initialize an async. request using the direction api
+        Routing routing = new Routing.Builder()
+                .travelMode(Routing.TravelMode.WALKING)
+                .withListener(this)
+                .waypoints(waypoints)
+                .build();
+
+        // launch the request
+        routing.execute();
     }
 
 

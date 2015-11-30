@@ -11,6 +11,7 @@ import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import android.widget.Toast;
 
+import com.directions.route.Routing;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -126,8 +127,7 @@ public class GoogleMapsDefineRouteActivity extends AbstractRouteActivity impleme
 
     public void createRoute(View view) {
         if (destination != null) {
-            float[] results = getDistanceBetweenTwoPoints(origin.getPosition(), destination.getPosition());
-            int distance = (int) results[0];
+            float distance = getDistanceBetweenTwoPoints(origin.getPosition(), destination.getPosition());
             /*Context context = getApplicationContext();
             int duration = Toast.LENGTH_SHORT;
             Toast.makeText(context, Integer.toString(distance), duration).show();*/
@@ -150,6 +150,19 @@ public class GoogleMapsDefineRouteActivity extends AbstractRouteActivity impleme
             }
             service.removeUpdates(this);
         }
+    }
+
+    // trace the route of the user
+    protected void traceRoute(MarkerOptions origin, MarkerOptions destination) {
+        // initialize an async. request using the direction api
+        Routing routing = new Routing.Builder()
+                .travelMode(Routing.TravelMode.WALKING)
+                .withListener(this)
+                .waypoints(origin.getPosition(), destination.getPosition())
+                .build();
+
+        // launch the request
+        routing.execute();
     }
 
 }

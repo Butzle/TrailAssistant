@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -104,6 +105,7 @@ public abstract class AbstractRouteActivity extends FragmentActivity implements 
         service.requestLocationUpdates(provider, 200, 0, this);
     }
 
+
     @Override
     public void onRoutingSuccess(ArrayList<Route> route, int shortestRouteIndex) {
         // remove the previous polylines
@@ -132,6 +134,16 @@ public abstract class AbstractRouteActivity extends FragmentActivity implements 
     }
 
     @Override
+    public void onRoutingSuccess(PolylineOptions mPolyOptions)
+    {
+        PolylineOptions polyoptions = new PolylineOptions();
+        polyoptions.color(Color.BLUE);
+        polyoptions.width(10);
+        polyoptions.addAll(mPolyOptions.getPoints());
+        map.addPolyline(polyoptions);
+    }
+
+    @Override
     public void onRoutingFailure() {
 
     }
@@ -146,29 +158,16 @@ public abstract class AbstractRouteActivity extends FragmentActivity implements 
 
     }
 
-    // trace the route of the user
-    protected void traceRoute(MarkerOptions origin, MarkerOptions destination) {
-        // initialize an async. request using the direction api
-        Routing routing = new Routing.Builder()
-                .travelMode(Routing.TravelMode.WALKING)
-                .withListener(this)
-                .waypoints(origin.getPosition(), destination.getPosition())
-                .build();
-
-        // launch the request
-        routing.execute();
-    }
-
-    public float[] getDistanceBetweenTwoPoints(LatLng start, LatLng finish) {
+    public float getDistanceBetweenTwoPoints(LatLng start, LatLng finish) {
         if (finish != null && start != null) {
             // The computed distance is stored in results[0].
             //If results has length 2 or greater, the initial bearing is stored in results[1].
             //If results has length 3 or greater, the final bearing is stored in results[2].
             float[] results = new float[1];
             Location.distanceBetween(start.latitude, start.longitude, finish.latitude, finish.longitude, results);
-            return results;
+            return results[0];
         }
-        return new float[]{0, 0};
+        return 0;
     }
 
     @Override
@@ -185,4 +184,6 @@ public abstract class AbstractRouteActivity extends FragmentActivity implements 
     public void onProviderDisabled(String provider) {
 
     }
+
+    //protected abstract void traceRoute(MarkerOptions origin, MarkerOptions destination);
 }
