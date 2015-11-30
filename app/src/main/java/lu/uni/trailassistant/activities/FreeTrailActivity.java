@@ -145,6 +145,7 @@ public class FreeTrailActivity extends AbstractRouteActivity{
                         });
         AlertDialog alert = alertDialogBuilder.create();
         alert.show();
+        timerHandler.removeCallbacks(timerRunnable);
     }
 
     public void finished(){

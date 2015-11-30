@@ -10,8 +10,7 @@ import android.view.MenuItem;
 
 import lu.uni.trailassistant.R;
 
-/**
- * aslkdhflaksjlkasdfjalsk
+/*
  */
 public class StartScreenActivity extends AppCompatActivity {
 

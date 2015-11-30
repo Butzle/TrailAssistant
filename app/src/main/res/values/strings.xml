@@ -6,4 +6,10 @@
     <string name="title_activity_google_maps_define_route">Google Maps Define Route</string>
     <string name="title_activity_create_new_training_program">Create New Training Program</string>
 
+    <string-array name="exercise_mode">
+        <item>Stretching</item>
+        <item>Toning</item>
+        <item>Running</item>
+    </string-array>
+
 </resources>
