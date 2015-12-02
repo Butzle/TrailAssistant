@@ -8,6 +8,10 @@ import android.widget.Spinner;
 
 import lu.uni.trailassistant.R;
 
+/*
+    Spinner: http://developer.android.com/guide/topics/ui/controls/spinner.html
+ */
+
 public class CreateNewTrainingProgramActivity extends AppCompatActivity {
 
     @Override
