@@ -130,10 +130,14 @@ public class FreeTrailActivity extends AbstractRouteActivity{
 
     private void showResultsToUser(){
         String distanceInKM;
+        float totalDistanceInMeter = 0;
+        float totalDistanceInKM = 0;
         if(startMarker != null && currentPosition != null) {
-            float distance = getDistanceBetweenTwoPoints(startMarker.getPosition(), currentPosition.getPosition());
-            float distanceInMeter = distance / 1000;        // total distance in
-            distanceInKM = String.format("%.2f", distanceInMeter);
+            for(int i = 0; i < waypoints.size()-1; i++){
+                totalDistanceInMeter+= getDistanceBetweenTwoPoints(waypoints.get(i), waypoints.get(i+1));
+            }
+            totalDistanceInKM = totalDistanceInMeter / 1000;        // total distance in
+            distanceInKM = String.format("%.2f", totalDistanceInKM);
         } else {
             distanceInKM = "0,00";
         }
@@ -184,7 +188,8 @@ public class FreeTrailActivity extends AbstractRouteActivity{
 
         }
         else {
-            map.addMarker(startMarker);
+
+            map.addMarker(currentPosition);
             traceRoute();
         }
     }
@@ -192,15 +197,14 @@ public class FreeTrailActivity extends AbstractRouteActivity{
 
     private void drawMarker(Location location){
         // Remove any existing markers on the map
-        map.clear();
         LatLng currentPosition = new LatLng(location.getLatitude(),location.getLongitude());
         map.addMarker(new MarkerOptions().position(currentPosition).title("ME"));
 
         // http://stackoverflow.com/questions/18425141/android-google-maps-api-v2-zoom-to-current-location
         CameraUpdate center=CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude()));
-        CameraUpdate zoom=CameraUpdateFactory.zoomTo(16);
+        //CameraUpdate zoom=CameraUpdateFactory.zoomTo(16);
         map.moveCamera(center);
-        map.animateCamera(zoom);
+        //map.animateCamera(zoom);
     }
 
 
@@ -210,15 +214,20 @@ public class FreeTrailActivity extends AbstractRouteActivity{
 
     // trace the route of the user
     protected void traceRoute() {
-        // initialize an async. request using the direction api
-        Routing routing = new Routing.Builder()
-                .travelMode(Routing.TravelMode.WALKING)
-                .withListener(this)
-                .waypoints(waypoints)
-                .build();
 
-        // launch the request
-        routing.execute();
+        // initialize an async. request using the direction api
+        if(waypoints.size() >= 2) {
+            LatLng fromIntermediatePoint = waypoints.get(waypoints.size() - 2);
+            LatLng toIntermediatePoint = waypoints.get(waypoints.size() - 1);
+            Routing routing = new Routing.Builder()
+                    .travelMode(Routing.TravelMode.WALKING)
+                    .withListener(this)
+                    .waypoints(fromIntermediatePoint, toIntermediatePoint)
+                    .build();
+
+            // launch the request
+            routing.execute();
+        }
     }
 
 

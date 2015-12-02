@@ -56,6 +56,8 @@ public abstract class AbstractRouteActivity extends FragmentActivity implements 
         map = null;
         polylines = new ArrayList<>();
         service = null;
+        // create a new array of polylines
+        polylines = new ArrayList<>();
 
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
@@ -109,31 +111,31 @@ public abstract class AbstractRouteActivity extends FragmentActivity implements 
     @Override
     public void onRoutingSuccess(ArrayList<Route> route, int shortestRouteIndex) {
         // remove the previous polylines
-        if (polylines.size() > 0) {
+       /* if (polylines.size() > 0) {
             for (Polyline poly : polylines) {
                 poly.remove();
             }
-        }
+        }*/
 
-        // create a new array of polylines
-        polylines = new ArrayList<>();
 
         // select the shortest path
-        Route path = route.get(shortestRouteIndex);
+        if(!route.isEmpty()) {
+            Route path = route.get(shortestRouteIndex);
+            // add polylines to the map and the array
+            PolylineOptions polyOptions = new PolylineOptions();
+            polyOptions.color(R.color.colorPrimary);
+            polyOptions.width(13);
+            polyOptions.addAll(path.getPoints());
+            Polyline polyline = map.addPolyline(polyOptions);
+            polylines.add(polyline);
 
-        // add polylines to the map and the array
-        PolylineOptions polyOptions = new PolylineOptions();
-        polyOptions.color(R.color.colorPrimary);
-        polyOptions.width(13);
-        polyOptions.addAll(path.getPoints());
-        Polyline polyline = map.addPolyline(polyOptions);
-        polylines.add(polyline);
+            // log the distance and duration
+            Log.i(TAG, "[Route] distance: " + path.getDistanceText() + ", duration: " + path.getDurationValue() + " sec");
+        }
 
-        // log the distance and duration
-        Log.i(TAG, "[Route] distance: " + path.getDistanceText() + ", duration: " + path.getDurationValue() + " sec");
+
     }
 
-    @Override
     public void onRoutingSuccess(PolylineOptions mPolyOptions)
     {
         PolylineOptions polyoptions = new PolylineOptions();

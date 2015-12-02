@@ -30,40 +30,38 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true" />
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Start"
+            android:id="@+id/start_pause_button"
+            android:onClick="startOrPause"
+            android:layout_alignTop="@+id/map"
+            android:layout_alignLeft="@+id/map"
+            android:layout_alignStart="@+id/map" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Finished"
+            android:onClick="onFinishedExercise"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:id="@+id/button" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0:00"
+            android:id="@+id/timerTextView"
+            android:editable="false"
+            android:textSize="32dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
+
 
     </RelativeLayout>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Start"
-        android:id="@+id/start_pause_button"
-        android:onClick="startOrPause"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginLeft="15dp" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Finished"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="15dp"
-        android:layout_alignBottom="@+id/timerTextView"
-        android:onClick="onFinishedExercise" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="0:00"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_alignBottom="@+id/start_pause_button"
-        android:id="@+id/timerTextView"
-        android:editable="false"
-        android:textSize="32dp" />
 
 
 </RelativeLayout>
