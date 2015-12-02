@@ -9,7 +9,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="lu.uni.trailassistant.PredefinedRouteActivity"
+    tools:context=".activities.PredefinedRouteActivity"
     tools:showIn="@layout/activity_predefined_route">
 
     <Button
@@ -22,11 +22,23 @@
         android:layout_alignParentStart="true"
         android:onClick="newTrainingProgram" />
 
-    <ExpandableListView
+    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/expandableListView"
+        android:text="Show history"
+        android:id="@+id/showHistoryButton"
+        android:layout_marginBottom="43dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:enabled="false" />
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/trainingProgramsListView"
         android:layout_below="@+id/newTrainingProgram"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/showHistoryButton" />
 </RelativeLayout>

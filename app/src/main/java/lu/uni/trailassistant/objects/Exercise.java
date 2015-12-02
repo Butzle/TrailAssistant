@@ -5,19 +5,13 @@ package lu.uni.trailassistant.objects;
  *
  */
 public abstract class Exercise {
-    protected EXERCISE_MODE exerciseMode;
+    protected int exerciseID;
 
-    public Exercise(EXERCISE_MODE exerciseMode) {
-        this.exerciseMode = exerciseMode;
+    public Exercise(int exerciseID) {
+        this.exerciseID = exerciseID;
     }
 
-    public EXERCISE_MODE getExerciseMode() {
-        return exerciseMode;
-    }
-
-    public void setExerciseMode(EXERCISE_MODE exerciseMode) {
-        this.exerciseMode = exerciseMode;
-    }
+    public int getExerciseID() { return exerciseID; }
 
     @Override
     public abstract String toString();
