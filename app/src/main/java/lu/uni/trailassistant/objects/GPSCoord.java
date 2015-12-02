@@ -6,18 +6,20 @@ import android.graphics.Path;
  * Created by leandrogil on 11/19/15.
  */
 public class GPSCoord {
-    private double longitude, lattitude;
+    private int gpsCoordID;
+    private float longitude, lattitude;
 
-    public GPSCoord(double longitude, double lattidude) {
+    public GPSCoord(int gpsCoordID, float longitude, float lattidude) {
+        this.gpsCoordID = gpsCoordID;
         setLongitude(longitude);
         setLattitude(lattidude);
     }
 
-    public double getLongitude() { return longitude; }
-    public double getLattitude() { return lattitude; }
+    public float getLongitude() { return longitude; }
+    public float getLattitude() { return lattitude; }
 
-    public void setLongitude(double longitude) { this.longitude = longitude; }
-    public void setLattitude(double lattitude) { this.lattitude = lattitude; }
+    public void setLongitude(float longitude) { this.longitude = longitude; }
+    public void setLattitude(float lattitude) { this.lattitude = lattitude; }
 
     public void generateGoogleMapsDirections() {
         // TODO: generate the Google Maps Direction(s) object through an HTTP request and return it(?)

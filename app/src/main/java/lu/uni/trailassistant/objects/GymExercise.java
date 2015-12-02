@@ -6,15 +6,24 @@ package lu.uni.trailassistant.objects;
 public class GymExercise extends Exercise {
     private int duration;
     private int repetitions;
-    private EXERCISE_MODE exerciseMode;
+    private GYM_MODE gymMode;
 
-    public GymExercise(int duration, int repetitions, EXERCISE_MODE exerciseMode) {
-        super(exerciseMode);
+    public GymExercise(int exerciseID, int duration, int repetitions, GYM_MODE gymMode) {
+        super(exerciseID);
+        this.gymMode = gymMode;
         this.duration = duration;
         this.repetitions = repetitions;
     }
 
     public String toString() {
-        return "[Toning exercise] Name: Duration=" + duration + ", Repetitions=" + repetitions + ", Exercise mode=" + exerciseMode;
+        return "[Gym exercise] Name: Duration=" + duration + ", Repetitions=" + repetitions + ", Exercise mode=" + gymMode.toString();
+    }
+
+    public static GYM_MODE getGymModeFromInt(int speed_mode) {
+        switch(speed_mode) {
+            case 0: return GYM_MODE.STRETCHING;
+            case 1: return GYM_MODE.TONING;
+            default: return GYM_MODE.STRETCHING;
+        }
     }
 }
