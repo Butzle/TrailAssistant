@@ -51,8 +51,13 @@ public class TrainingProgram {
         exercisesQueue.remove(index);
     }
 
-    // returns a ListIterator object that can be used to traverse through the queue in proper order
-    public ListIterator<Exercise> getQueueAsListIterator() {
+    // returns a ListIterator object that can be used to traverse through the exercises in proper order
+    public ListIterator<Exercise> getExercisesAsListIterator() {
         return exercisesQueue.listIterator();
+    }
+
+    // returns a ListIterator object that can be used to traverse through the GPS coordinates in proper order
+    public ListIterator<GPSCoord> getGPSCoordsAsListIterator() {
+        return gpsCoords.listIterator();
     }
 }

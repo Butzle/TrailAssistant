@@ -13,19 +13,25 @@ import android.util.Log;
 public class TrailAssistantDBBuilder extends SQLiteOpenHelper {
     // Database information
     private static final String DB_NAME = "trailassistant";
-    private static final int DB_VERSION = 5;
+    private static final int DB_VERSION = 7;
 
-    // Exercise table
-    private static final String DB_EXERCISE_TABLE_NAME = "Exercise";
-    private static final String DB_EXERCISE_ID = "_id integer primary key autoincrement";
-    private static final String DB_EXERCISE_TYPE = "type tinyint not null";
-    private static final String DB_EXERCISE_REPETITIONS = "repetitions integer default 0";
-    private static final String DB_EXERCISE_DURATION = "duration integer default 0";
-    private static final String DB_EXERCISE_DISTANCE = "distance integer default 0";
-    private static final String DB_EXERCISE_SPEED_MODE = "speed_mode tinyint";
-    private static final String DB_EXERCISE_EXERCISE_MODE = "exercise_mode tinyint";
-    private static final String DB_EXERCISE_ORDER = "exercise_order tinyint not null";
-    private static final String DB_EXERCISE_TRAINING_PROGRAM_FKEY = "fkey_training_program_id integer not null references TrainingProgram(_id)";
+    // RunningExercise table
+    private static final String DB_RUNNING_EXERCISE_TABLE_NAME = "RunningExercise";
+    private static final String DB_RUNNING_EXERCISE_ID = "_id integer primary key autoincrement";
+    private static final String DB_RUNNING_EXERCISE_DURATION = "duration integer default 0";
+    private static final String DB_RUNNING_EXERCISE_DISTANCE = "distance integer default 0";
+    private static final String DB_RUNNING_EXERCISE_SPEED_MODE = "speed_mode tinyint not null";
+    private static final String DB_RUNNING_EXERCISE_ORDER = "exercise_order tinyint not null";
+    private static final String DB_RUNNING_EXERCISE_TRAINING_PROGRAM_FKEY = "fkey_training_program_id integer not null references TrainingProgram(_id)";
+
+    // GymExercise table
+    private static final String DB_GYM_EXERCISE_TABLE_NAME = "GymExercise";
+    private static final String DB_GYM_EXERCISE_ID = "_id integer primary key autoincrement";
+    private static final String DB_GYM_EXERCISE_DURATION = "duration integer default 0";
+    private static final String DB_GYM_EXERCISE_REPETITIONS = "repetitions integer default 0";
+    private static final String DB_GYM_EXERCISE_GYM_MODE = "gym_mode tinyint not null";
+    private static final String DB_GYM_EXERCISE_ORDER = "exercise_order tinyint not null";
+    private static final String DB_GYM_EXERCISE_TRAINING_PROGRAM_FKEY = "fkey_training_program_id integer not null references TrainingProgram(_id)";
 
     // TrainingProgram table
     private static final String DB_TRAINING_PROGRAM_TABLE_NAME = "TrainingProgram";
@@ -49,9 +55,14 @@ public class TrailAssistantDBBuilder extends SQLiteOpenHelper {
 
 
     // create table SQL command for table Exercise
-    private static final String DB_CREATE_EXERCISE_TABLE =
-            "create table " + DB_EXERCISE_TABLE_NAME + "(" + DB_EXERCISE_ID + ", " + DB_EXERCISE_TYPE + ", " + DB_EXERCISE_REPETITIONS + ", " +
-            DB_EXERCISE_DURATION + ", " + DB_EXERCISE_DISTANCE + ", " + DB_EXERCISE_SPEED_MODE + ", " + DB_EXERCISE_EXERCISE_MODE + ", " + DB_EXERCISE_ORDER + ", " + DB_EXERCISE_TRAINING_PROGRAM_FKEY + ")";
+    private static final String DB_CREATE_RUNNING_EXERCISE_TABLE =
+            "create table " + DB_RUNNING_EXERCISE_TABLE_NAME + "(" + DB_RUNNING_EXERCISE_ID + ", " +
+            DB_RUNNING_EXERCISE_DURATION + ", " + DB_RUNNING_EXERCISE_DISTANCE + ", " + DB_RUNNING_EXERCISE_SPEED_MODE + ", " + DB_RUNNING_EXERCISE_ORDER + ", " + DB_RUNNING_EXERCISE_TRAINING_PROGRAM_FKEY + ")";
+
+    // create table SQL command for table Exercise
+    private static final String DB_CREATE_GYM_EXERCISE_TABLE =
+            "create table " + DB_GYM_EXERCISE_TABLE_NAME + "(" + DB_GYM_EXERCISE_ID + ", " + DB_GYM_EXERCISE_DURATION + ", " +
+                    DB_GYM_EXERCISE_REPETITIONS + ", " + DB_GYM_EXERCISE_GYM_MODE + ", " + DB_GYM_EXERCISE_ORDER + ", " + DB_GYM_EXERCISE_TRAINING_PROGRAM_FKEY + ")";
 
     // create table SQL command for table GPSCoord
     private static final String DB_CREATE_GPS_COORD_TABLE =
@@ -66,6 +77,13 @@ public class TrailAssistantDBBuilder extends SQLiteOpenHelper {
     private static final String DB_CREATE_HISTORY_TABLE =
             "create table " + DB_HISTORY_TABLE_NAME + "(" + DB_HISTORY_ID + ", " + DB_HISTORY_TIME + ", " + DB_HISTORY_CALORIES_BURNED + ", " + DB_HISTORY_TRAINING_PROGRAM_FKEY + ")";
 
+    // TODO: write triggers on the RunningExercise and GymExercise tables that update the exercise order (kind of hard and inefficient in SQL, better to do it with the application itself for now...)
+    // trigger for RunningExercise
+    private static final String DB_RUNNING_EXERCISE_TRIGGER =
+            "create trigger update_exercise_order after insert on RunningExercise " +
+            "for each row begin " +
+            "declare ";
+
     public TrailAssistantDBBuilder(Context context) {
         // this constructor basically says which database we want to open
         super(context, DB_NAME, null, DB_VERSION);
@@ -74,7 +92,8 @@ public class TrailAssistantDBBuilder extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase database) {
         database.execSQL(DB_CREATE_TRAINING_PROGRAM_TABLE);
-        database.execSQL(DB_CREATE_EXERCISE_TABLE);
+        database.execSQL(DB_CREATE_RUNNING_EXERCISE_TABLE);
+        database.execSQL(DB_CREATE_GYM_EXERCISE_TABLE);
         database.execSQL(DB_CREATE_GPS_COORD_TABLE);
         database.execSQL(DB_CREATE_HISTORY_TABLE);
         insertDummyData(database);
@@ -82,25 +101,25 @@ public class TrailAssistantDBBuilder extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
-        Log.w(TrailAssistantDBBuilder.class.getName(), "Upgrading database from version" + oldVersion + "to " + newVersion + "." +
+        Log.w(TrailAssistantDBBuilder.class.getName(), "Upgrading database from version " + oldVersion + " to " + newVersion + ". " +
                 "All existing data will be destroyed, and the new database will replace the previous one!");
-        database.execSQL("drop table if exists " + DB_GPS_COORD_TABLE_NAME + ", " + DB_HISTORY_TABLE_NAME + ", " + DB_EXERCISE_TABLE_NAME + ", " + DB_TRAINING_PROGRAM_TABLE_NAME);
+        database.execSQL("drop table if exists " + DB_GPS_COORD_TABLE_NAME + ", " + DB_HISTORY_TABLE_NAME + ", " + DB_GYM_EXERCISE_TABLE_NAME + ", " + DB_RUNNING_EXERCISE_TABLE_NAME + ", " + DB_TRAINING_PROGRAM_TABLE_NAME);
         onCreate(database);
     }
 
     private void insertDummyData(SQLiteDatabase database) {
         String insertTrainingProgram = "insert into TrainingProgram values (NULL, 'Test Training Program')";
-        //String retrieveTrainingProgramID = "select training_program_id from TrainingProgram order by training_program_id desc limit 1";
+        //String retrieveTrainingProgramID = "select _id from TrainingProgram order by training_program_id desc limit 1";
         String insertGPSCoords =    "insert into GPSCoord values (NULL, 49.600464, 6.094379, 1, 1), " +
                                     "(NULL, 49.600309, 6.095712, 2, 1), " +
                                     "(NULL, 49.605406, 6.097900, 3, 1), " +
                                     "(NULL, 49.607214, 6.109276, 4, 1), " +
                                     "(NULL, 49.604339, 6.111636, 5, 1), " +
                                     "(NULL, 49.606251, 6.112159, 6, 1)";
-        String insertExercises =    "insert into Exercise values (NULL, 'Starting jogging', 'RUNNING', 0, 360, 0, 'NORMAL', 1, 1), " +
-                                    "(NULL, 'Final sprint', 'RUNNING', 0, 0, 300, 'SPRINT', 2, 1), " +
-                                    "(NULL, 'Walk and relax', 'RUNNING', 0, 120, 0, 'WALK_AND_BREATHE', 3, 1), " +
-                                    "(NULL, 'Some stretching exercise', 'TONING', 20, 0, 0, NULL, 4, 1)";
+        String insertRunningExercises =    "insert into RunningExercise values (NULL, 360, 0, 2, 1, 1), " +
+                                    "(NULL, 0, 300, 3, 2, 1), " +
+                                    "(NULL, 120, 0, 1, 3, 1)";
+        String insertGymExercises = "insert into GymExercise values (NULL, 20, 0, 0, 4, 1)";
 
         // insert new training program and retrieve its ID
         database.execSQL(insertTrainingProgram);
@@ -111,7 +130,8 @@ public class TrailAssistantDBBuilder extends SQLiteOpenHelper {
         // insert GPS coordinates that represent trail (here in this example, it's a trail that goes from my home to the Merl public parc)
         database.execSQL(insertGPSCoords);
         // insert some dummy exercises that belong to that training program
-        database.execSQL(insertExercises);
+        database.execSQL(insertRunningExercises);
+        database.execSQL(insertGymExercises);
 
     }
 

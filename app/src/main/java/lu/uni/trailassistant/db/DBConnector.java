@@ -1,8 +1,11 @@
 package lu.uni.trailassistant.db;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+
+import java.util.ListIterator;
 
 import lu.uni.trailassistant.objects.GYM_MODE;
 import lu.uni.trailassistant.objects.Exercise;
@@ -38,7 +41,7 @@ public class DBConnector {
 
     public void openConnection() {
         trailAssistantDB = sqliteHelper.getWritableDatabase();
-        // enable foreign key constraints checks
+        // enable foreign key constraint checks
         //trailAssistantDB.setForeignKeyConstraintsEnabled(true);
     }
 
@@ -50,22 +53,22 @@ public class DBConnector {
         sqliteHelper = new TrailAssistantDBBuilder(context);
     }
 
-    private Exercise getExerciseFromCursor(Cursor cursor) {
-        int exerciseID = cursor.getInt(0);
-        int type =  cursor.getInt(1);
-        Exercise exercise;
-        // type 0 = RunningExercise, type 1 = GymExercise
-        if(type == 0) {
-            int distance = cursor.getInt(4);
-            SPEED_MODE speedMode = RunningExercise.getSpeedModeFromInt(cursor.getInt(5));
-            exercise = new RunningExercise(exerciseID, speedMode, distance);
-        } else {
-            int repetitions = cursor.getInt(2);
-            int duration = cursor.getInt(3);
-            GYM_MODE gymMode = GymExercise.getGymModeFromInt(cursor.getInt(7));
-            exercise = new GymExercise(exerciseID, duration, repetitions, gymMode);
-        }
-        return exercise;
+    private RunningExercise getRunningExerciseFromCursor(Cursor cursor) {
+        int runningExerciseID = cursor.getInt(0);
+        int duration = cursor.getInt(1);
+        int distance = cursor.getInt(2);
+        SPEED_MODE speedMode = RunningExercise.getSpeedModeFromInt(cursor.getInt(3));
+        RunningExercise runningExercise = new RunningExercise(runningExerciseID, duration, distance, speedMode);
+        return runningExercise;
+    }
+
+    private GymExercise getGymExerciseFromCursor(Cursor cursor) {
+        int gymExerciseID = cursor.getInt(0);
+        int duration = cursor.getInt(1);
+        int repetitions = cursor.getInt(2);
+        GYM_MODE gymMode = GymExercise.getGymModeFromInt(cursor.getInt(3));
+        GymExercise gymExercise = new GymExercise(gymExerciseID, duration, repetitions, gymMode);
+        return gymExercise;
     }
 
     private GPSCoord getGPSCoordFromCursor(Cursor cursor) {
@@ -128,24 +131,91 @@ public class DBConnector {
         }
         cursor.close();
 
-        // finally, retrieve exercises that belong to this training program
-        String queryStringExercises =   "select * from Exercise " +
-                                        "inner join TrainingProgram on Exercise.fkey_training_program_id=TrainingProgram " +
+        // finally, retrieve exercises that belong to this training program (first the running exercises, then the gym exercises)
+        String queryStringRunningExercises = "select * from RunningExercise " +
+                                        "inner join TrainingProgram on RunningExercise.fkey_training_program_id=TrainingProgram._id " +
                                         "where TrainingProgram._id=? " +
-                                        "order by Exercise.exercise_order ascending";
-        cursor = trailAssistantDB.rawQuery(queryStringExercises, queryArgs);
-        cursor.moveToFirst();
-        while(!cursor.isAfterLast()) {
-            Exercise exercise = getExerciseFromCursor(cursor);
-            tp.appendExerciseToTail(exercise);
-            cursor.moveToNext();
+                                        "order by RunningExercise.exercise_order ascending";
+        String queryStringGymExercises =   "select * from GymExercise " +
+                                        "inner join TrainingProgram on GymExercise.fkey_training_program_id=TrainingProgram._id " +
+                                        "where TrainingProgram._id=? " +
+                                        "order by GymExercise.exercise_order ascending";
+        Cursor runningExerciseCursor = trailAssistantDB.rawQuery(queryStringRunningExercises, queryArgs);
+        runningExerciseCursor.moveToFirst();
+        Cursor gymExerciseCursor = trailAssistantDB.rawQuery(queryStringGymExercises, queryArgs);
+        gymExerciseCursor.moveToFirst();
+        while(!runningExerciseCursor.isAfterLast() && !gymExerciseCursor.isAfterLast()) {
+            if(runningExerciseCursor.getInt(4) < gymExerciseCursor.getInt(4)) {
+                tp.appendExerciseToTail(getRunningExerciseFromCursor(runningExerciseCursor));
+                runningExerciseCursor.moveToNext();
+            } else {
+                tp.appendExerciseToTail(getGymExerciseFromCursor(gymExerciseCursor));
+                gymExerciseCursor.moveToNext();
+            }
         }
-        cursor.close();
+        runningExerciseCursor.close();
+        gymExerciseCursor.close();
         return tp;
     }
 
     public Cursor getTrainingProgramCursor() {
         String queryString = "select _id, name from TrainingProgram";
         return trailAssistantDB.rawQuery(queryString, null);
+    }
+
+    public void writeTrainingProgramToDB(TrainingProgram tp) {
+        trailAssistantDB.beginTransaction();
+        String insertTrainingProgram = "insert into TrainingProgram values (NULL, ?)";
+        String trainingProgramArgs[] = new String[1];
+        String retrieveTrainingProgramID = "select _id from TrainingProgram order by _id desc limit 1";
+
+        // write training program to DB and retrieve new ID
+        trailAssistantDB.execSQL(insertTrainingProgram);
+        Cursor cursor = trailAssistantDB.rawQuery(retrieveTrainingProgramID, null);
+        cursor.moveToFirst();
+        int lastTrainingProgramID = cursor.getInt(0);
+        cursor.close();
+
+        // insert exercises into their respective tables
+        ListIterator<Exercise> exerciseIterator = tp.getExercisesAsListIterator();
+        int order = 1;
+        while(exerciseIterator.hasNext()) {
+            Exercise exercise = exerciseIterator.next();
+            if(exercise instanceof RunningExercise) {
+                RunningExercise runningExercise = (RunningExercise) exercise;
+                ContentValues runningExerciseContentValues = new ContentValues();
+                runningExerciseContentValues.put("duration", runningExercise.getDuration());
+                runningExerciseContentValues.put("distance", runningExercise.getDistance());
+                runningExerciseContentValues.put("speed_mode", runningExercise.getSpeedMode().ordinal());
+                runningExerciseContentValues.put("exercise_order", order);
+                runningExerciseContentValues.put("fkey_training_program_id", lastTrainingProgramID);
+                trailAssistantDB.insert("RunningExercise", null, runningExerciseContentValues);
+            } else if(exercise instanceof GymExercise) {
+                GymExercise gymExercise = (GymExercise) exercise;
+                ContentValues gymExerciseContentValues = new ContentValues();
+                gymExerciseContentValues.put("duration", gymExercise.getDuration());
+                gymExerciseContentValues.put("repetitions", gymExercise.getRepetitions());
+                gymExerciseContentValues.put("gym_mode", gymExercise.getGymMode().ordinal());
+                gymExerciseContentValues.put("exercise_order", order);
+                gymExerciseContentValues.put("fkey_training_program_id", lastTrainingProgramID);
+                trailAssistantDB.insert("GymExercise", null, gymExerciseContentValues);
+            }
+            order++;
+        }
+
+        // insert GPS coordinates
+        ListIterator<GPSCoord> gpsCoordIterator = tp.getGPSCoordsAsListIterator();
+        order = 1;
+        while(gpsCoordIterator.hasNext()) {
+            GPSCoord gpsCoord = gpsCoordIterator.next();
+            ContentValues gpsCoordContentValues = new ContentValues();
+            gpsCoordContentValues.put("longitude", gpsCoord.getLongitude());
+            gpsCoordContentValues.put("lattitude", gpsCoord.getLattitude());
+            gpsCoordContentValues.put("coord_order", order);
+            gpsCoordContentValues.put("fkey_training_program_id", lastTrainingProgramID);
+            trailAssistantDB.insert("GPSCoord", null, gpsCoordContentValues);
+            order++;
+        }
+        trailAssistantDB.endTransaction();
     }
 }

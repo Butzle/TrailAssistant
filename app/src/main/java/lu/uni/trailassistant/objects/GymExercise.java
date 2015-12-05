@@ -4,8 +4,7 @@ package lu.uni.trailassistant.objects;
  * Created by leandrogil on 21.11.15.
  */
 public class GymExercise extends Exercise {
-    private int duration;
-    private int repetitions;
+    private int duration, repetitions;
     private GYM_MODE gymMode;
 
     public GymExercise(int exerciseID, int duration, int repetitions, GYM_MODE gymMode) {
@@ -14,6 +13,13 @@ public class GymExercise extends Exercise {
         this.duration = duration;
         this.repetitions = repetitions;
     }
+
+    public GYM_MODE getGymMode() { return gymMode; }
+    public int getDuration() { return duration; }
+    public int getRepetitions() { return repetitions; }
+
+    public void setDuration(int duration) { this.duration = duration; }
+    public void setRepetitions(int repetitions) { this.repetitions = repetitions; }
 
     public String toString() {
         return "[Gym exercise] Name: Duration=" + duration + ", Repetitions=" + repetitions + ", Exercise mode=" + gymMode.toString();

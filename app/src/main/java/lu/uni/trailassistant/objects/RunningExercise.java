@@ -6,19 +6,22 @@ package lu.uni.trailassistant.objects;
 public class RunningExercise extends Exercise {
 
     private SPEED_MODE speedMode;
-    private int distance;
+    private int distance, duration;
 
-    public RunningExercise(int exerciseID, SPEED_MODE speedMode, int distance) {
+    public RunningExercise(int exerciseID, int duration, int distance, SPEED_MODE speedMode) {
         super(exerciseID);
         this.speedMode = speedMode;
+        this.duration = duration;
         this.distance = distance;
     }
 
     public SPEED_MODE getSpeedMode() { return speedMode; }
     public int getDistance() { return distance; }
+    public int getDuration() { return duration; }
 
     public void setSpeedMode(SPEED_MODE speedMode) { this.speedMode = speedMode; }
     public void setDistance(int distance) { this.distance = distance; }
+    public void setDuration(int duration) { this.duration = duration; }
 
     public String toString() {
         return "[Running exercise] Distance=" + distance + ", Speed mode=" + speedMode.toString();
