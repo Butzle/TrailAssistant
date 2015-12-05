@@ -61,7 +61,6 @@ public abstract class AbstractRouteActivity extends FragmentActivity implements 
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
         if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-            // Toast.makeText(this, "GPS is Enabled in your device", Toast.LENGTH_SHORT).show();
         }else{
             showGPSDisabledAlertToUser();
         }
