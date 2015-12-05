@@ -54,7 +54,6 @@ public abstract class AbstractRouteActivity extends FragmentActivity implements 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         map = null;
-        polylines = new ArrayList<>();
         service = null;
         // create a new array of polylines
         polylines = new ArrayList<>();
@@ -104,7 +103,7 @@ public abstract class AbstractRouteActivity extends FragmentActivity implements 
             return;
         }
         // TODO check method 200000 => time and 0 => after so many meters?
-        service.requestLocationUpdates(provider, 200, 0, this);
+        service.requestLocationUpdates(provider, 2000, 0, this);
     }
 
 
