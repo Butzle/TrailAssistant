@@ -2,10 +2,9 @@ package lu.uni.trailassistant.activities;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Criteria;
@@ -16,18 +15,12 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.directions.route.Route;
-import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
@@ -49,6 +42,7 @@ public abstract class AbstractRouteActivity extends FragmentActivity implements 
     private static final String TAG = "MapsActivity";
     protected GoogleMap map;
     protected LocationManager service;
+    protected String provider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,14 +89,17 @@ public abstract class AbstractRouteActivity extends FragmentActivity implements 
         service = (LocationManager) getSystemService(LOCATION_SERVICE);
         Criteria criteria = new Criteria();
 
-
         // Getting the name of the best provider
-        String provider = service.getBestProvider(criteria, true);
+        provider = service.getBestProvider(criteria, true);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-        // TODO check method 200000 => time and 0 => after so many meters?
-        service.requestLocationUpdates(provider, 2000, 0, this);
+
+        // if not in debuggable mode
+        if ((getApplication().getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) == 0) {
+            service.requestLocationUpdates(provider, 2000, 0, this);
+        }
+
     }
 
 
@@ -185,5 +182,4 @@ public abstract class AbstractRouteActivity extends FragmentActivity implements 
 
     }
 
-    //protected abstract void traceRoute(MarkerOptions origin, MarkerOptions destination);
 }

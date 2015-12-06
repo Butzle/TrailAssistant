@@ -67,6 +67,10 @@ public class GoogleMapsDefineRouteActivity extends AbstractRouteActivity impleme
         super.onMapReady(map);
         map.setOnMapLongClickListener(this);
         map.setOnMapClickListener(this);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        service.requestLocationUpdates(provider, 2000, 0, this);
 
     }
 

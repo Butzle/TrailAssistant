@@ -1,19 +1,21 @@
 package lu.uni.trailassistant.activities;
 
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.directions.route.Routing;
 import com.google.android.gms.common.ConnectionResult;
@@ -29,8 +31,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import lu.uni.trailassistant.R;
+import lu.uni.trailassistant.mock.MockLocationProvider;
 
 
 
@@ -40,7 +44,7 @@ import lu.uni.trailassistant.R;
  * TODO what happens if the user pushes app to background?
  */
 
-public class FreeTrailActivity extends AbstractRouteActivity{
+public class FreeTrailActivity extends AbstractRouteActivity {
 
     // where the user is located when he starts the free trail activity. This will be taken as start
     // position for his training program.
@@ -50,7 +54,12 @@ public class FreeTrailActivity extends AbstractRouteActivity{
     private TextView timerTextView;
     private Button startAndPauseButton;
     private List<LatLng> waypoints;
+    private MockLocationProvider mock;
     long startTime = 0;
+    private double lat;
+    private double lon;
+
+
     Handler timerHandler = new Handler();
 
     // separate Thread for the clock
@@ -73,8 +82,13 @@ public class FreeTrailActivity extends AbstractRouteActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_free_trail);
 
+        lat = 49.600896;
+        lon = 6.154168;
+
+
         startLocation = null;
         currentPosition = null;
+        mock = null;
 
         waypoints = new ArrayList<LatLng>();
 
@@ -103,11 +117,11 @@ public class FreeTrailActivity extends AbstractRouteActivity{
 
     }
 
-    public void startOrPause(View view){
-        if(startAndPauseButton.getText().equals("Reset")){
+    public void startOrPause(View view) {
+        if (startAndPauseButton.getText().equals("Reset")) {
             timerHandler.removeCallbacks(timerRunnable);
             startAndPauseButton.setText("Start");
-        }else {
+        } else {
             startTime = System.currentTimeMillis();
             timerHandler.postDelayed(timerRunnable, 0);
             startAndPauseButton.setText("Reset");
@@ -128,13 +142,13 @@ public class FreeTrailActivity extends AbstractRouteActivity{
     }
 
 
-    private void showResultsToUser(){
+    private void showResultsToUser() {
         String distanceInKM;
         float totalDistanceInMeter = 0;
         float totalDistanceInKM = 0;
-        if(startMarker != null && currentPosition != null) {
-            for(int i = 0; i < waypoints.size()-1; i++){
-                totalDistanceInMeter+= getDistanceBetweenTwoPoints(waypoints.get(i), waypoints.get(i+1));
+        if (startMarker != null && currentPosition != null) {
+            for (int i = 0; i < waypoints.size() - 1; i++) {
+                totalDistanceInMeter += getDistanceBetweenTwoPoints(waypoints.get(i), waypoints.get(i + 1));
             }
             totalDistanceInKM = totalDistanceInMeter / 1000;        // total distance in
             distanceInKM = String.format("%.2f", totalDistanceInKM);
@@ -145,7 +159,7 @@ public class FreeTrailActivity extends AbstractRouteActivity{
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setMessage("Statistics for your run: \n" +
                 "Elapsed Time: " + timerTextView.getText().toString() + "\n" +
-                "Total Distance: " + distanceInKM +"km")
+                "Total Distance: " + distanceInKM + "km")
                 .setCancelable(false)
                 .setPositiveButton("OK",
                         new DialogInterface.OnClickListener() {
@@ -159,14 +173,54 @@ public class FreeTrailActivity extends AbstractRouteActivity{
         timerHandler.removeCallbacks(timerRunnable);
     }
 
-    public void finished(){
+    public void finished() {
         Intent intent = new Intent(this, StartScreenActivity.class);
         startActivity(intent);
     }
 
 
     public void onMapReady(GoogleMap map) {
-        super.onMapReady(map);
+       super.onMapReady(map);
+
+
+        // if in debuggable mode
+        if ((getApplication().getApplicationInfo().flags &
+                ApplicationInfo.FLAG_DEBUGGABLE) != 0) {
+
+            if (mock==null) {
+                mock = new MockLocationProvider("Map", this);
+            }
+
+            //Set test location
+            mock.pushLocation(lat, lon);
+
+            LocationManager locMgr = (LocationManager)
+                    getSystemService(LOCATION_SERVICE);
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+            locMgr.requestLocationUpdates("Map", 0, 50, this);
+
+            new Thread(new Runnable() {
+                public void run() {
+                    while(true) {
+                        try {
+                            // ask every 20 seconds a new location
+                            Thread.sleep(20000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        Random r = new Random();
+                        mock.pushLocation(lat, lon);
+                        // calculate random next location
+                        lat += 0.001;
+                        lon += 0.001 + (0.002 - 0.001) * r.nextDouble();
+
+                    }
+                }
+            }).start();
+
+        }
     }
 
     @Override
@@ -184,13 +238,12 @@ public class FreeTrailActivity extends AbstractRouteActivity{
             CameraUpdate zoom = CameraUpdateFactory.zoomTo(16);
             map.moveCamera(center);
             map.animateCamera(zoom);
-
-
         }
         else {
-
             map.addMarker(currentPosition);
             traceRoute();
+            CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude()));
+            map.moveCamera(center);
         }
     }
 
