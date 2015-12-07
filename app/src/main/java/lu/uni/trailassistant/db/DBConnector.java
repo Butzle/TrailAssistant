@@ -121,7 +121,7 @@ public class DBConnector {
         String queryStringGPSCoords =   "select * from GPSCoord " +
                                         "inner join TrainingProgram on GPSCoord.fkey_training_program_id=TrainingProgram._id " +
                                         "where TrainingProgram._id=? " +
-                                        "order by GPSCoord.coord_order ascending";
+                                        "order by GPSCoord.coord_order asc";
         cursor = trailAssistantDB.rawQuery(queryStringGPSCoords, queryArgs);
         cursor.moveToFirst();
         while(!cursor.isAfterLast()) {
@@ -135,11 +135,11 @@ public class DBConnector {
         String queryStringRunningExercises = "select * from RunningExercise " +
                                         "inner join TrainingProgram on RunningExercise.fkey_training_program_id=TrainingProgram._id " +
                                         "where TrainingProgram._id=? " +
-                                        "order by RunningExercise.exercise_order ascending";
+                                        "order by RunningExercise.exercise_order asc";
         String queryStringGymExercises =   "select * from GymExercise " +
                                         "inner join TrainingProgram on GymExercise.fkey_training_program_id=TrainingProgram._id " +
                                         "where TrainingProgram._id=? " +
-                                        "order by GymExercise.exercise_order ascending";
+                                        "order by GymExercise.exercise_order asc";
         Cursor runningExerciseCursor = trailAssistantDB.rawQuery(queryStringRunningExercises, queryArgs);
         runningExerciseCursor.moveToFirst();
         Cursor gymExerciseCursor = trailAssistantDB.rawQuery(queryStringGymExercises, queryArgs);

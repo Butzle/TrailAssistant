@@ -26,6 +26,7 @@ public class TrainingProgram {
     }
     
     public String getProgramName(){ return programName; }
+    public LinkedList<Exercise> getExercises() { return exercisesQueue; }
     public GPSCoord getFirstGPSCoord() { return gpsCoords.getFirst(); }
     public GPSCoord getLastGPSCoord() { return gpsCoords.getLast(); }
 

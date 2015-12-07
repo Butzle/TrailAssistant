@@ -24,7 +24,29 @@ public class RunningExercise extends Exercise {
     public void setDuration(int duration) { this.duration = duration; }
 
     public String toString() {
-        return "[Running exercise] Distance=" + distance + ", Speed mode=" + speedMode.toString();
+        String str = "";
+        switch(speedMode) {
+            case FAST_WALK:
+                str = str + "Fast walk";
+                break;
+            case NORMAL:
+                str = str + "Run normally";
+                break;
+            case SPRINT:
+                str = str + "Sprint";
+                break;
+            default:
+                str = str + "Walk and breathe";
+                break;
+        }
+        if(duration == 0) {
+            str = str + " for " + distance + "m";
+        } else if (distance == 0) {
+            str = str + " for " + duration + " seconds";
+        } else {
+            str = str + " for " + distance + "m and " + duration + "seconds";
+        }
+        return str;
     }
 
     public static SPEED_MODE getSpeedModeFromInt(int speed_mode) {

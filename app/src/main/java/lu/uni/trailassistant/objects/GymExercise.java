@@ -22,7 +22,23 @@ public class GymExercise extends Exercise {
     public void setRepetitions(int repetitions) { this.repetitions = repetitions; }
 
     public String toString() {
-        return "[Gym exercise] Name: Duration=" + duration + ", Repetitions=" + repetitions + ", Exercise mode=" + gymMode.toString();
+        String str = "";
+        switch(gymMode) {
+            case STRETCHING:
+                str = str + "Stretching exercise";
+                break;
+            default:
+                str = str + "Toning exercise";
+                break;
+        }
+        if(repetitions == 0) {
+            str = str + " for " + duration + " seconds";
+        } else if(duration == 0) {
+            str = str + ", " + repetitions + " repetitions";
+        } else {
+            str = str + ", " + repetitions + " repetitions for " + duration + " seconds";
+        }
+        return str;
     }
 
     public static GYM_MODE getGymModeFromInt(int speed_mode) {
