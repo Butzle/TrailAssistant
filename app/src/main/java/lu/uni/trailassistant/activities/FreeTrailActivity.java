@@ -58,6 +58,7 @@ public class FreeTrailActivity extends AbstractRouteActivity {
     long startTime = 0;
     private double lat;
     private double lon;
+    private Thread nextLocation;
 
 
     Handler timerHandler = new Handler();
@@ -81,10 +82,6 @@ public class FreeTrailActivity extends AbstractRouteActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_free_trail);
-
-        lat = 49.600896;
-        lon = 6.154168;
-
 
         startLocation = null;
         currentPosition = null;
@@ -150,7 +147,7 @@ public class FreeTrailActivity extends AbstractRouteActivity {
             for (int i = 0; i < waypoints.size() - 1; i++) {
                 totalDistanceInMeter += getDistanceBetweenTwoPoints(waypoints.get(i), waypoints.get(i + 1));
             }
-            totalDistanceInKM = totalDistanceInMeter / 1000;        // total distance in
+            totalDistanceInKM = totalDistanceInMeter / 1000;        // total distance in km
             distanceInKM = String.format("%.2f", totalDistanceInKM);
         } else {
             distanceInKM = "0,00";
@@ -161,16 +158,27 @@ public class FreeTrailActivity extends AbstractRouteActivity {
                 "Elapsed Time: " + timerTextView.getText().toString() + "\n" +
                 "Total Distance: " + distanceInKM + "km")
                 .setCancelable(false)
-                .setPositiveButton("OK",
+                .setNegativeButton("OK",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 finished();
                             }
 
                         });
+        alertDialogBuilder.setPositiveButton("Save",
+            new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    saveRoute();
+                }
+            });
         AlertDialog alert = alertDialogBuilder.create();
         alert.show();
         timerHandler.removeCallbacks(timerRunnable);
+    }
+
+    public void saveRoute(){
+        Intent intent = new Intent(this, CreateNewTrainingProgramActivity.class);
+        startActivity(intent);
     }
 
     public void finished() {
@@ -191,7 +199,7 @@ public class FreeTrailActivity extends AbstractRouteActivity {
                 mock = new MockLocationProvider("Map", this);
             }
 
-            //Set test location
+            // set the start location
             mock.pushLocation(lat, lon);
 
             LocationManager locMgr = (LocationManager)
@@ -201,24 +209,29 @@ public class FreeTrailActivity extends AbstractRouteActivity {
             }
             locMgr.requestLocationUpdates("Map", 0, 50, this);
 
-            new Thread(new Runnable() {
+            nextLocation = new Thread(new Runnable() {
                 public void run() {
-                    while(true) {
-                        try {
-                            // ask every 20 seconds a new location
-                            Thread.sleep(20000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                    waypoints = new ArrayList<LatLng>();
+                    lat = 49.600896;
+                    lon = 6.154168;
+                    while (true) {
                         Random r = new Random();
                         mock.pushLocation(lat, lon);
                         // calculate random next location
                         lat += 0.001;
                         lon += 0.001 + (0.002 - 0.001) * r.nextDouble();
 
+                        try {
+                            // ask every 20 seconds a new location
+                            Thread.sleep(20000);
+                        } catch (InterruptedException e) {
+                            break;
+                        }
+
                     }
                 }
-            }).start();
+            });
+            nextLocation.start();
 
         }
     }
@@ -281,6 +294,11 @@ public class FreeTrailActivity extends AbstractRouteActivity {
             // launch the request
             routing.execute();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
 
