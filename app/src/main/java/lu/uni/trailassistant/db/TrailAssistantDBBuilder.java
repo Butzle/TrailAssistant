@@ -13,7 +13,7 @@ import android.util.Log;
 public class TrailAssistantDBBuilder extends SQLiteOpenHelper {
     // Database information
     private static final String DB_NAME = "trailassistant";
-    private static final int DB_VERSION = 8;
+    private static final int DB_VERSION = 7;
 
     // RunningExercise table
     private static final String DB_RUNNING_EXERCISE_TABLE_NAME = "RunningExercise";
@@ -103,12 +103,12 @@ public class TrailAssistantDBBuilder extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase database, int oldVersion, int newVersion) {
         Log.w(TrailAssistantDBBuilder.class.getName(), "Upgrading database from version " + oldVersion + " to " + newVersion + ". " +
                 "All existing data will be destroyed, and the new database will replace the previous one!");
+        //database.execSQL("drop table if exists " + DB_GPS_COORD_TABLE_NAME + ", " + DB_HISTORY_TABLE_NAME + ", " + DB_GYM_EXERCISE_TABLE_NAME + ", " + DB_RUNNING_EXERCISE_TABLE_NAME + ", " + DB_TRAINING_PROGRAM_TABLE_NAME);
         database.execSQL("drop table if exists " + DB_GPS_COORD_TABLE_NAME);
         database.execSQL("drop table if exists " + DB_HISTORY_TABLE_NAME);
         database.execSQL("drop table if exists " + DB_GYM_EXERCISE_TABLE_NAME);
         database.execSQL("drop table if exists " + DB_RUNNING_EXERCISE_TABLE_NAME);
         database.execSQL("drop table if exists " + DB_TRAINING_PROGRAM_TABLE_NAME);
-        //database.execSQL("drop table if exists " + DB_GPS_COORD_TABLE_NAME + ", " + DB_HISTORY_TABLE_NAME + ", " + DB_GYM_EXERCISE_TABLE_NAME + ", " + DB_RUNNING_EXERCISE_TABLE_NAME + ", " + DB_TRAINING_PROGRAM_TABLE_NAME);
         onCreate(database);
     }
 

@@ -20,13 +20,13 @@ public class CreateNewTrainingProgramActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_new_training_program);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        Spinner spinner = (Spinner) findViewById(R.id.spinner_exercise_mode);
+        //Spinner spinner = (Spinner) findViewById(R.id.spinner_exercise_mode);
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.exercise_mode, android.R.layout.simple_spinner_item);
         // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
-        spinner.setAdapter(adapter);
+        //spinner.setAdapter(adapter);
 
     }
 
