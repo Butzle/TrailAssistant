@@ -3,7 +3,6 @@ package lu.uni.trailassistant.activities;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.app.AppOpsManager;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -14,14 +13,12 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.directions.route.BuildConfig;
 import com.directions.route.Routing;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -46,7 +43,6 @@ import lu.uni.trailassistant.mock.MockLocationProvider;
 /*
  * Current Location : http://stackoverflow.com/questions/16005223/android-google-map-api-v2-current-location
  * Timer : http://stackoverflow.com/questions/4597690/android-timer-how
- * TODO what happens if the user pushes app to background?
  */
 
 public class FreeTrailActivity extends AbstractRouteActivity {
@@ -139,8 +135,6 @@ public class FreeTrailActivity extends AbstractRouteActivity {
     @Override
     public void onPause() {
         super.onPause();
-        timerHandler.removeCallbacks(timerRunnable);
-        startAndPauseButton.setText("Start");
     }
 
     public void onFinishedExercise(View view) {
@@ -272,6 +266,7 @@ public class FreeTrailActivity extends AbstractRouteActivity {
             startMarker = new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude())).title("Start Position");
             startMarker.icon(BitmapDescriptorFactory.fromResource(R.drawable.start_blue));
             map.addMarker(startMarker);
+            // http://stackoverflow.com/questions/18425141/android-google-maps-api-v2-zoom-to-current-location
             CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(getStartLocation().getLatitude(), getStartLocation().getLongitude()));
             CameraUpdate zoom = CameraUpdateFactory.zoomTo(16);
             map.moveCamera(center);
@@ -290,11 +285,8 @@ public class FreeTrailActivity extends AbstractRouteActivity {
         LatLng currentPosition = new LatLng(location.getLatitude(), location.getLongitude());
         map.addMarker(new MarkerOptions().position(currentPosition).title("ME"));
 
-        // http://stackoverflow.com/questions/18425141/android-google-maps-api-v2-zoom-to-current-location
         CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude()));
-        //CameraUpdate zoom=CameraUpdateFactory.zoomTo(16);
         map.moveCamera(center);
-        //map.animateCamera(zoom);
     }
 
 
@@ -324,7 +316,6 @@ public class FreeTrailActivity extends AbstractRouteActivity {
     protected void onDestroy() {
         super.onDestroy();
         reset();
-        // terminate thread when going back to another activity
 
     }
 
