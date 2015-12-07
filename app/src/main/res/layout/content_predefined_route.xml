@@ -10,17 +10,21 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".activities.PredefinedRouteActivity"
-    tools:showIn="@layout/activity_predefined_route">
+    tools:showIn="@layout/activity_predefined_route"
+    android:background="#a9a9ad">
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Training Program"
+        android:text="Define New Training Program Shortest Path"
         android:id="@+id/newTrainingProgram"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:onClick="newTrainingProgram" />
+        android:onClick="newTrainingProgram"
+        android:background="#7678fa"
+        android:layout_alignRight="@+id/showHistoryButton"
+        android:layout_alignEnd="@+id/showHistoryButton" />
 
     <Button
         android:layout_width="wrap_content"

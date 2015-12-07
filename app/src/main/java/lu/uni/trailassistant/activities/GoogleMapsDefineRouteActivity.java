@@ -70,7 +70,6 @@ public class GoogleMapsDefineRouteActivity extends AbstractRouteActivity impleme
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-        service.requestLocationUpdates(provider, 2000, 0, this);
 
     }
 
@@ -111,8 +110,6 @@ public class GoogleMapsDefineRouteActivity extends AbstractRouteActivity impleme
         // add the marker to the map
         map.addMarker(origin);
 
-        // center the camera with a zoom of 16
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(origin.getPosition(), 16));
     }
 
     private void createDestinationMarker() {
@@ -124,7 +121,7 @@ public class GoogleMapsDefineRouteActivity extends AbstractRouteActivity impleme
         map.addMarker(destination);
 
         // center the camera with a zoom of 16
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(destination.getPosition(), 16));
+       // map.moveCamera(CameraUpdateFactory.newLatLngZoom(destination.getPosition(), 16));
     }
 
 
@@ -132,9 +129,6 @@ public class GoogleMapsDefineRouteActivity extends AbstractRouteActivity impleme
     public void createRoute(View view) {
         if (destination != null) {
             float distance = getDistanceBetweenTwoPoints(origin.getPosition(), destination.getPosition());
-            /*Context context = getApplicationContext();
-            int duration = Toast.LENGTH_SHORT;
-            Toast.makeText(context, Integer.toString(distance), duration).show();*/
         }
         Intent intent = new Intent(this, CreateNewTrainingProgramActivity.class);
         startActivity(intent);
@@ -152,6 +146,9 @@ public class GoogleMapsDefineRouteActivity extends AbstractRouteActivity impleme
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return;
             }
+            // center the camera with a zoom of 16
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(origin.getPosition(), 16));
+
             service.removeUpdates(this);
         }
     }

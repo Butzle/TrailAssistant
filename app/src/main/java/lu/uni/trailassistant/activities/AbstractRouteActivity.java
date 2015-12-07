@@ -2,6 +2,8 @@ package lu.uni.trailassistant.activities;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.AppOpsManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
@@ -11,11 +13,13 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
+import com.directions.route.BuildConfig;
 import com.directions.route.Route;
 import com.directions.route.RoutingListener;
 import com.google.android.gms.maps.GoogleMap;
@@ -43,6 +47,7 @@ public abstract class AbstractRouteActivity extends FragmentActivity implements 
     protected GoogleMap map;
     protected LocationManager service;
     protected String provider;
+    protected boolean isMockEnabled;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,10 +56,12 @@ public abstract class AbstractRouteActivity extends FragmentActivity implements 
         service = null;
         // create a new array of polylines
         polylines = new ArrayList<>();
+        isMockEnabled = isMockLocationEnabled();
 
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
-        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) && isMockEnabled){
+
         }else{
             showGPSDisabledAlertToUser();
         }
@@ -95,24 +102,15 @@ public abstract class AbstractRouteActivity extends FragmentActivity implements 
             return;
         }
 
-        // if not in debuggable mode
-        if ((getApplication().getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) == 0) {
+        // test if debuggable mode and mock location are disabled
+        if ((((getApplication().getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) == 0) && !isMockEnabled)) {
             service.requestLocationUpdates(provider, 2000, 0, this);
         }
-
     }
 
 
     @Override
     public void onRoutingSuccess(ArrayList<Route> route, int shortestRouteIndex) {
-        // remove the previous polylines
-       /* if (polylines.size() > 0) {
-            for (Polyline poly : polylines) {
-                poly.remove();
-            }
-        }*/
-
-
         // select the shortest path
         if(!route.isEmpty()) {
             Route path = route.get(shortestRouteIndex);
@@ -180,6 +178,32 @@ public abstract class AbstractRouteActivity extends FragmentActivity implements 
     @Override
     public void onProviderDisabled(String provider) {
 
+    }
+
+    // http://stackoverflow.com/questions/33003553/how-to-read-selected-mock-location-app-in-android-m-api-23/33066797#33066797
+    public boolean isMockLocationEnabled()
+    {
+        boolean isMockLocation = false;
+        try
+        {
+            //if marshmallow
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            {
+                AppOpsManager opsManager = (AppOpsManager) this.getApplicationContext().getSystemService(Context.APP_OPS_SERVICE);
+                isMockLocation = (opsManager.checkOp(AppOpsManager.OPSTR_MOCK_LOCATION, android.os.Process.myUid(), BuildConfig.APPLICATION_ID)== AppOpsManager.MODE_ALLOWED);
+            }
+            else
+            {
+                // in marshmallow this will always return true
+                isMockLocation = !android.provider.Settings.Secure.getString(this.getApplicationContext().getContentResolver(), "mock_location").equals("0");
+            }
+        }
+        catch (Exception e)
+        {
+            return isMockLocation;
+        }
+
+        return isMockLocation;
     }
 
 }
