@@ -2,14 +2,12 @@ package lu.uni.trailassistant.activities;
 
 import android.Manifest;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.view.View;
-import android.widget.Toast;
 
 import com.directions.route.Routing;
 import com.google.android.gms.common.ConnectionResult;
@@ -130,7 +128,7 @@ public class GoogleMapsDefineRouteActivity extends AbstractRouteActivity impleme
         if (destination != null) {
             float distance = getDistanceBetweenTwoPoints(origin.getPosition(), destination.getPosition());
         }
-        Intent intent = new Intent(this, CreateNewTrainingProgramActivity.class);
+        Intent intent = new Intent(this, AddExerciseActivity.class);
         startActivity(intent);
     }
 

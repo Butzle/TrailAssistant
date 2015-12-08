@@ -76,5 +76,6 @@
         android:layout_alignParentStart="true"
         android:layout_toStartOf="@+id/trainingProgramNameEditText"
         android:layout_alignEnd="@+id/trainingProgramNameTextView"
-        android:textSize="13dp" />
+        android:textSize="13dp"
+        android:onClick="onClickAddTrainingExerciseButton" />
 </RelativeLayout>

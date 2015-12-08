@@ -103,8 +103,7 @@ public abstract class AbstractRouteActivity extends FragmentActivity implements 
         }
 
         // test if debuggable mode and mock location are disabled
-        if (!(((getApplication().getApplicationInfo().flags &
-                ApplicationInfo.FLAG_DEBUGGABLE) != 0) && isMockEnabled)){
+        if (!(((getApplication().getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0) && isMockEnabled)){
             service.requestLocationUpdates(provider, 2000, 0, this);
         }
     }
