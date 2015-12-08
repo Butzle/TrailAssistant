@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".activities.CreateNewTrainingProgramActivity">
+    tools:context=".activities.AddExerciseActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -21,6 +21,6 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_create_new_training_program" />
+    <include layout="@layout/content_add_exercise" />
 
 </android.support.design.widget.CoordinatorLayout>

@@ -56,4 +56,9 @@ public class EditTrainingProgramExercisesActivity extends AppCompatActivity {
         Intent intent = new Intent(this, AddExerciseActivity.class);
         startActivity(intent);
     }
+
+    public void onClickFinishButton(View view) {
+        // TODO: store changes to the database
+        finish();
+    }
 }

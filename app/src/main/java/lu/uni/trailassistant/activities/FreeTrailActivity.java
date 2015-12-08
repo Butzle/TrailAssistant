@@ -181,7 +181,7 @@ public class FreeTrailActivity extends AbstractRouteActivity {
     }
 
     public void saveRoute() {
-        Intent intent = new Intent(this, CreateNewTrainingProgramActivity.class);
+        Intent intent = new Intent(this, AddExerciseActivity.class);
         reset();
         startActivity(intent);
     }

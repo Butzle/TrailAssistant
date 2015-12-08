@@ -11,5 +11,8 @@
         <item>Toning</item>
         <item>Running</item>
     </string-array>
+    <string name="title_activity_edit_training_program_exercises">
+        EditTrainingProgramExercisesActivity
+    </string>
 
 </resources>
