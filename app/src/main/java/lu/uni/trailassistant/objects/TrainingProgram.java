@@ -25,12 +25,22 @@ public class TrainingProgram {
         gpsCoords = new LinkedList<GPSCoord>();
     }
     
-    public String getProgramName(){ return programName; }
-    public LinkedList<Exercise> getExercises() { return exercisesQueue; }
-    public GPSCoord getFirstGPSCoord() { return gpsCoords.getFirst(); }
-    public GPSCoord getLastGPSCoord() { return gpsCoords.getLast(); }
+    public String getProgramName(){
+        return programName;
+    }
+    public LinkedList<Exercise> getExercises() {
+        return exercisesQueue;
+    }
+    public GPSCoord getFirstGPSCoord() {
+        return gpsCoords.getFirst();
+    }
+    public GPSCoord getLastGPSCoord() {
+        return gpsCoords.getLast();
+    }
 
-    public void setProgramName(String name) { this.programName = programName; }
+    public void setProgramName(String name) {
+        this.programName = programName;
+    }
     
     public void appendExerciseToTail(Exercise exercise) {
         exercisesQueue.addLast(exercise);
@@ -39,6 +49,7 @@ public class TrainingProgram {
         exercisesQueue.addFirst(exercise);
     }
     public void appendGPSCoordToTrail(GPSCoord gpsCoord) {
+
         gpsCoords.addLast(gpsCoord);
     }
 

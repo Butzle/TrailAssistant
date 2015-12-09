@@ -9,4 +9,4 @@ public enum SPEED_MODE {
     WALK_AND_BREATHE,
     NORMAL,
     SPRINT
-};
+}
