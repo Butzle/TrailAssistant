@@ -12,6 +12,10 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
+
+import java.util.HashMap;
+import java.util.LinkedList;
 
 import lu.uni.trailassistant.R;
 import lu.uni.trailassistant.db.DBConnector;
@@ -19,11 +23,14 @@ import lu.uni.trailassistant.objects.Exercise;
 import lu.uni.trailassistant.objects.TrainingProgram;
 
 public class EditTrainingProgramExercisesActivity extends AppCompatActivity {
+    static final int ADD_EXERCISES=1, EDIT_EXERCISE=2;
+
     int trainingProgramID;
     TrainingProgram trainingProgram;
     EditText trainingProgramNameEditText;
     Button addExerciseButton, finishButton;
     ListView exercisesListView;
+    ArrayAdapter<Exercise> exerciseAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,25 +47,44 @@ public class EditTrainingProgramExercisesActivity extends AppCompatActivity {
         DBConnector dbc = new DBConnector(this);
         dbc.openConnection();
         trainingProgram = dbc.getTrainingProgramFromID(trainingProgramID);
-        Log.i(EditTrainingProgramExercisesActivity.class.getName(), "Training Program contents: " + trainingProgram.toString()
-        );
         trainingProgramNameEditText = (EditText) findViewById(R.id.trainingProgramNameEditText);
         trainingProgramNameEditText.setText(trainingProgram.getProgramName());
 
         // populate list view with exercises
         exercisesListView = (ListView) findViewById(R.id.exercisesListView);
-        ArrayAdapter<Exercise> exerciseAdapter = new ArrayAdapter<Exercise>(this, R.layout.exercises_list_view_item, trainingProgram.getExercises());
+        exerciseAdapter = new ArrayAdapter<Exercise>(this, R.layout.exercises_list_view_item, trainingProgram.getExercises());
         exercisesListView.setAdapter(exerciseAdapter);
         dbc.closeConnection();
     }
 
     public void onClickAddTrainingExerciseButton(View view) {
         Intent intent = new Intent(this, AddExerciseActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, ADD_EXERCISES);
     }
 
     public void onClickFinishButton(View view) {
-        // TODO: store changes to the database
+        DBConnector dbc = new DBConnector(this);
+        dbc.openConnection();
+        dbc.updateExistingTrainingProgram(trainingProgram);
+        dbc.closeConnection();
         finish();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == ADD_EXERCISES) {
+            if(resultCode == RESULT_OK) {
+                HashMap<Integer,Exercise> exercisesToBeAdded = (HashMap<Integer,Exercise>)data.getSerializableExtra("exercises_to_be_added");
+                int amountOfExercises = data.getIntExtra("amount_of_exercises", 0);
+                if(amountOfExercises>0) {
+                    for(int counter=0; counter<amountOfExercises; counter++) {
+                        Exercise exercise = exercisesToBeAdded.get(counter);
+                        trainingProgram.appendExerciseToTail(exercise);
+                    }
+                    Toast.makeText(this, "Exercises saved successfully!", Toast.LENGTH_SHORT).show();
+                    exerciseAdapter.notifyDataSetChanged();
+                }
+            }
+        }
     }
 }

@@ -4,9 +4,12 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
+import java.util.Iterator;
 import java.util.ListIterator;
 
+import lu.uni.trailassistant.activities.EditTrainingProgramExercisesActivity;
 import lu.uni.trailassistant.objects.GYM_MODE;
 import lu.uni.trailassistant.objects.Exercise;
 import lu.uni.trailassistant.objects.GPSCoord;
@@ -216,6 +219,62 @@ public class DBConnector {
             trailAssistantDB.insert("GPSCoord", null, gpsCoordContentValues);
             order++;
         }
+        trailAssistantDB.endTransaction();
+    }
+
+    public void updateExistingTrainingProgram(TrainingProgram tp) {
+        trailAssistantDB.beginTransaction();
+        // update training program name
+        String whereClause = "_id=?";
+        String whereArgs[] = new String[]{Integer.toString(tp.getTrainingProgramID())};
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("name", tp.getProgramName());
+        trailAssistantDB.update("TrainingProgram", contentValues, whereClause, whereArgs);
+
+        // update exercises
+        Iterator<Exercise> iterator = tp.getExercisesAsListIterator();
+        int order=1;
+        while(iterator.hasNext()) {
+            Exercise tempExercise = iterator.next();
+            if(tempExercise instanceof RunningExercise) {
+                RunningExercise runningExercise = (RunningExercise) tempExercise;
+                contentValues = new ContentValues();
+                contentValues.put("duration", runningExercise.getDuration());
+                contentValues.put("distance", runningExercise.getDistance());
+                contentValues.put("speed_mode", runningExercise.getSpeedMode().ordinal());
+                contentValues.put("exercise_order", order);
+                if(runningExercise.getExerciseID() > 0) {
+                    // if the exercise has an ID that is not 0, then it already has a record in the database
+                    whereClause = "_id=?";
+                    whereArgs = new String[]{Integer.toString(runningExercise.getExerciseID())};
+                    trailAssistantDB.update("RunningExercise", contentValues, whereClause, whereArgs);
+                } else {
+                    // otherwise, create a new record with a new ID for that exercise and add reference to the correct training program
+                    contentValues.put("fkey_training_program_id", tp.getTrainingProgramID());
+                    trailAssistantDB.insert("RunningExercise", null, contentValues);
+                }
+            } else {
+                GymExercise gymExercise = (GymExercise) tempExercise;
+                contentValues = new ContentValues();
+                contentValues.put("duration", gymExercise.getDuration());
+                contentValues.put("repetitions", gymExercise.getRepetitions());
+                contentValues.put("gym_mode", gymExercise.getGymMode().ordinal());
+                contentValues.put("exercise_order", order);
+                if(gymExercise.getExerciseID() > 0) {
+                    // if the exercise has an ID that is not 0, then it already has a record in the database
+                    whereClause = "_id=?";
+                    whereArgs = new String[]{Integer.toString(gymExercise.getExerciseID())};
+                    trailAssistantDB.update("GymExercise", contentValues, whereClause, whereArgs);
+                } else {
+                    // otherwise, create a new record with a new ID for that exercise and add reference to the correct training program
+                    contentValues.put("fkey_training_program_id", tp.getTrainingProgramID());
+                    trailAssistantDB.insert("GymExercise", null, contentValues);
+                }
+            }
+            order++;
+        }
+
+        // TODO: update GPS coordinates in the database
         trailAssistantDB.endTransaction();
     }
 }

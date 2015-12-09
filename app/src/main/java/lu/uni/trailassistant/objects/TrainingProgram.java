@@ -29,6 +29,7 @@ public class TrainingProgram {
     public LinkedList<Exercise> getExercises() { return exercisesQueue; }
     public GPSCoord getFirstGPSCoord() { return gpsCoords.getFirst(); }
     public GPSCoord getLastGPSCoord() { return gpsCoords.getLast(); }
+    public int getTrainingProgramID() { return trainingProgramID; }
 
     public void setProgramName(String name) { this.programName = programName; }
     

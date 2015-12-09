@@ -33,13 +33,148 @@
         android:id="@+id/textView"
         android:layout_alignBottom="@+id/spinner_exercise_mode"
         android:textSize="16dp"
-        android:gravity="center" />
+        android:gravity="center"
+        android:enabled="true" />
     <Spinner
         android:id="@+id/spinner_exercise_mode"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:spinnerMode="dropdown"
         android:layout_below="@+id/remainingDistance"
-        android:layout_toRightOf="@+id/textView"
-        android:layout_toEndOf="@+id/textView"
-        android:spinnerMode="dropdown" />
+        android:layout_toEndOf="@+id/applyButton" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Distance:"
+        android:id="@+id/distanceTextView"
+        android:textSize="16dp"
+        android:gravity="center"
+        android:layout_alignBottom="@+id/distanceEditText"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/textView"
+        android:enabled="true"
+        android:visibility="visible" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="10"
+        android:id="@+id/distanceEditText"
+        android:enabled="true"
+        android:layout_below="@+id/spinner_exercise_mode"
+        android:layout_alignEnd="@+id/speedModeSpinner"
+        android:layout_alignStart="@+id/spinner_exercise_mode" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Duration:"
+        android:id="@+id/durationTextView"
+        android:textSize="16dp"
+        android:gravity="center"
+        android:layout_below="@+id/distanceTextView"
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/repetitionsTextView"
+        android:enabled="true"
+        android:visibility="visible" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Repetitions:"
+        android:id="@+id/repetitionsTextView"
+        android:textSize="16dp"
+        android:gravity="center"
+        android:layout_alignParentStart="true"
+        android:layout_alignBottom="@+id/repetitionsEditText"
+        android:layout_below="@+id/durationEditText"
+        android:enabled="true"
+        android:visibility="visible" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="10"
+        android:id="@+id/repetitionsEditText"
+        android:enabled="true"
+        android:visibility="visible"
+        android:layout_below="@+id/durationEditText"
+        android:layout_alignEnd="@+id/speedModeSpinner"
+        android:layout_alignStart="@+id/speedModeSpinner" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="time"
+        android:ems="10"
+        android:id="@+id/durationEditText"
+        android:enabled="true"
+        android:visibility="visible"
+        android:layout_below="@+id/distanceEditText"
+        android:layout_alignStart="@+id/repetitionsEditText" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add"
+        android:id="@+id/addButton"
+        android:onClick="onClickAddButton"
+        android:layout_below="@+id/gymModeSpinner"
+        android:layout_alignEnd="@+id/spinner_exercise_mode" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Apply"
+        android:id="@+id/applyButton"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:onClick="onClickApplyButton" />
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/speedModeSpinner"
+        android:layout_below="@+id/repetitionsEditText"
+        android:layout_toEndOf="@+id/speedModeTextView"
+        android:spinnerMode="dropdown"
+        android:visibility="visible"
+        android:layout_alignStart="@+id/spinner_exercise_mode" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Speed mode: "
+        android:id="@+id/speedModeTextView"
+        android:textSize="16dp"
+        android:gravity="center"
+        android:layout_below="@+id/repetitionsTextView"
+        android:layout_alignParentStart="true"
+        android:layout_alignBottom="@+id/speedModeSpinner"
+        android:enabled="true" />
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/gymModeSpinner"
+        android:layout_below="@+id/speedModeSpinner"
+        android:layout_alignStart="@+id/speedModeSpinner"
+        android:spinnerMode="dropdown"
+        android:visibility="visible" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Gym mode: "
+        android:id="@+id/gymModeTextView"
+        android:textSize="16dp"
+        android:gravity="center"
+        android:layout_below="@+id/speedModeTextView"
+        android:layout_alignParentStart="true"
+        android:layout_alignBottom="@+id/gymModeSpinner"
+        android:visibility="visible"
+        android:enabled="true" />
 </RelativeLayout>
