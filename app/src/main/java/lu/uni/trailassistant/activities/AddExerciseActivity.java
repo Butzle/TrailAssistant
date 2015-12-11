@@ -217,7 +217,7 @@ public class AddExerciseActivity extends AppCompatActivity {
         }
     }
 
-    public void onClickApplyButton(View view) {
+    public void onClickFinishButton(View view) {
         Intent parentIntent = getIntent();
         Bundle bundle = new Bundle();
         bundle.putSerializable("exercises_to_be_added", exercisesToBeAdded);

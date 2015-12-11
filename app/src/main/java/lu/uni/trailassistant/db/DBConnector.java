@@ -147,13 +147,18 @@ public class DBConnector {
         runningExerciseCursor.moveToFirst();
         Cursor gymExerciseCursor = trailAssistantDB.rawQuery(queryStringGymExercises, queryArgs);
         gymExerciseCursor.moveToFirst();
-        while(!runningExerciseCursor.isAfterLast() && !gymExerciseCursor.isAfterLast()) {
-            if(runningExerciseCursor.getInt(4) < gymExerciseCursor.getInt(4)) {
+        int currentCursor=1;
+        while(!runningExerciseCursor.isAfterLast() || !gymExerciseCursor.isAfterLast()) {
+            // add exercises in correct order to the training program, one by one
+            if(!runningExerciseCursor.isAfterLast() && runningExerciseCursor.getInt(4)==currentCursor) {
                 tp.appendExerciseToTail(getRunningExerciseFromCursor(runningExerciseCursor));
                 runningExerciseCursor.moveToNext();
-            } else {
+                currentCursor++;
+            }
+            if(!gymExerciseCursor.isAfterLast() && gymExerciseCursor.getInt(4)==currentCursor) {
                 tp.appendExerciseToTail(getGymExerciseFromCursor(gymExerciseCursor));
                 gymExerciseCursor.moveToNext();
+                currentCursor++;
             }
         }
         runningExerciseCursor.close();
@@ -224,57 +229,64 @@ public class DBConnector {
 
     public void updateExistingTrainingProgram(TrainingProgram tp) {
         trailAssistantDB.beginTransaction();
-        // update training program name
-        String whereClause = "_id=?";
-        String whereArgs[] = new String[]{Integer.toString(tp.getTrainingProgramID())};
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("name", tp.getProgramName());
-        trailAssistantDB.update("TrainingProgram", contentValues, whereClause, whereArgs);
+        try {
+            // update training program name
+            String whereClause = "_id=?";
+            String whereArgs[] = new String[]{Integer.toString(tp.getTrainingProgramID())};
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("name", tp.getProgramName());
+            trailAssistantDB.update("TrainingProgram", contentValues, whereClause, whereArgs);
 
-        // update exercises
-        Iterator<Exercise> iterator = tp.getExercisesAsListIterator();
-        int order=1;
-        while(iterator.hasNext()) {
-            Exercise tempExercise = iterator.next();
-            if(tempExercise instanceof RunningExercise) {
-                RunningExercise runningExercise = (RunningExercise) tempExercise;
-                contentValues = new ContentValues();
-                contentValues.put("duration", runningExercise.getDuration());
-                contentValues.put("distance", runningExercise.getDistance());
-                contentValues.put("speed_mode", runningExercise.getSpeedMode().ordinal());
-                contentValues.put("exercise_order", order);
-                if(runningExercise.getExerciseID() > 0) {
-                    // if the exercise has an ID that is not 0, then it already has a record in the database
-                    whereClause = "_id=?";
-                    whereArgs = new String[]{Integer.toString(runningExercise.getExerciseID())};
-                    trailAssistantDB.update("RunningExercise", contentValues, whereClause, whereArgs);
+            // update exercises
+            Iterator<Exercise> iterator = tp.getExercisesAsListIterator();
+            int order=1;
+            while (iterator.hasNext()) {
+                Exercise tempExercise = iterator.next();
+                if (tempExercise instanceof RunningExercise) {
+                    RunningExercise runningExercise = (RunningExercise) tempExercise;
+                    contentValues = new ContentValues();
+                    contentValues.put("duration", runningExercise.getDuration());
+                    contentValues.put("distance", runningExercise.getDistance());
+                    contentValues.put("speed_mode", runningExercise.getSpeedMode().ordinal());
+                    contentValues.put("exercise_order", order);
+                    if (runningExercise.getExerciseID() > 0) {
+                        // if the exercise has an ID that is not 0, then it already has a record in the database
+                        whereClause = "_id=?";
+                        whereArgs = new String[]{Integer.toString(runningExercise.getExerciseID())};
+                        trailAssistantDB.update("RunningExercise", contentValues, whereClause, whereArgs);
+                    } else {
+                        // otherwise, create a new record with a new ID for that exercise and add reference to the correct training program
+                        contentValues.put("fkey_training_program_id", tp.getTrainingProgramID());
+                        trailAssistantDB.insert("RunningExercise", null, contentValues);
+                    }
                 } else {
-                    // otherwise, create a new record with a new ID for that exercise and add reference to the correct training program
-                    contentValues.put("fkey_training_program_id", tp.getTrainingProgramID());
-                    trailAssistantDB.insert("RunningExercise", null, contentValues);
+                    GymExercise gymExercise = (GymExercise) tempExercise;
+                    contentValues = new ContentValues();
+                    contentValues.put("duration", gymExercise.getDuration());
+                    contentValues.put("repetitions", gymExercise.getRepetitions());
+                    contentValues.put("gym_mode", gymExercise.getGymMode().ordinal());
+                    contentValues.put("exercise_order", order);
+                    if (gymExercise.getExerciseID() > 0) {
+                        // if the exercise has an ID that is not 0, then it already has a record in the database
+                        whereClause = "_id=?";
+                        whereArgs = new String[]{Integer.toString(gymExercise.getExerciseID())};
+                        trailAssistantDB.update("GymExercise", contentValues, whereClause, whereArgs);
+                    } else {
+                        // otherwise, create a new record with a new ID for that exercise and add reference to the correct training program
+                        contentValues.put("fkey_training_program_id", tp.getTrainingProgramID());
+                        trailAssistantDB.insert("GymExercise", null, contentValues);
+                    }
                 }
-            } else {
-                GymExercise gymExercise = (GymExercise) tempExercise;
-                contentValues = new ContentValues();
-                contentValues.put("duration", gymExercise.getDuration());
-                contentValues.put("repetitions", gymExercise.getRepetitions());
-                contentValues.put("gym_mode", gymExercise.getGymMode().ordinal());
-                contentValues.put("exercise_order", order);
-                if(gymExercise.getExerciseID() > 0) {
-                    // if the exercise has an ID that is not 0, then it already has a record in the database
-                    whereClause = "_id=?";
-                    whereArgs = new String[]{Integer.toString(gymExercise.getExerciseID())};
-                    trailAssistantDB.update("GymExercise", contentValues, whereClause, whereArgs);
-                } else {
-                    // otherwise, create a new record with a new ID for that exercise and add reference to the correct training program
-                    contentValues.put("fkey_training_program_id", tp.getTrainingProgramID());
-                    trailAssistantDB.insert("GymExercise", null, contentValues);
-                }
+                order++;
             }
-            order++;
-        }
 
-        // TODO: update GPS coordinates in the database
-        trailAssistantDB.endTransaction();
+            // TODO: update GPS coordinates in the database
+
+            trailAssistantDB.setTransactionSuccessful();
+        } catch (Exception e) {
+            Log.e(DBConnector.class.getName(), "Error occured during update transaction! Changes will be rolled back.");
+        } finally {
+            trailAssistantDB.endTransaction();
+        }
     }
 }

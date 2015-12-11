@@ -62,7 +62,7 @@ public class PredefinedRouteActivity extends AppCompatActivity {
                     openProgramButton.setEnabled(false);
                 }*/
                 // enable Buttons as soon as user clicks on an item in the ListView
-                showHistoryButton.setEnabled(true);
+                //showHistoryButton.setEnabled(true);
                 openProgramButton.setEnabled(true);
                 // reset background color of last selected ListView item (if needed)
                 Drawable defaultBackground = parent.getChildAt(position).getBackground();
@@ -92,5 +92,4 @@ public class PredefinedRouteActivity extends AppCompatActivity {
         intent.putExtra("training_program_id", tpca.getItemId(lastSelectedIndex));
         startActivity(intent);
     }
-
 }

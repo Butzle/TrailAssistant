@@ -2,11 +2,8 @@ package lu.uni.trailassistant.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -15,7 +12,6 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 
 import lu.uni.trailassistant.R;
 import lu.uni.trailassistant.db.DBConnector;
@@ -62,12 +58,14 @@ public class EditTrainingProgramExercisesActivity extends AppCompatActivity {
         startActivityForResult(intent, ADD_EXERCISES);
     }
 
-    public void onClickFinishButton(View view) {
+    public void onClickSaveChangesButton(View view) {
         DBConnector dbc = new DBConnector(this);
         dbc.openConnection();
+        trainingProgram.setTrainingProgramName(trainingProgramNameEditText.getText().toString());
         dbc.updateExistingTrainingProgram(trainingProgram);
         dbc.closeConnection();
         finish();
+        Toast.makeText(this, "Changes saved successfully!", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -81,7 +79,6 @@ public class EditTrainingProgramExercisesActivity extends AppCompatActivity {
                         Exercise exercise = exercisesToBeAdded.get(counter);
                         trainingProgram.appendExerciseToTail(exercise);
                     }
-                    Toast.makeText(this, "Exercises saved successfully!", Toast.LENGTH_SHORT).show();
                     exerciseAdapter.notifyDataSetChanged();
                 }
             }

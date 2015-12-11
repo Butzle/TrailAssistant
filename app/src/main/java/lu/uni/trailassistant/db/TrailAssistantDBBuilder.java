@@ -77,7 +77,6 @@ public class TrailAssistantDBBuilder extends SQLiteOpenHelper {
     private static final String DB_CREATE_HISTORY_TABLE =
             "create table " + DB_HISTORY_TABLE_NAME + "(" + DB_HISTORY_ID + ", " + DB_HISTORY_TIME + ", " + DB_HISTORY_CALORIES_BURNED + ", " + DB_HISTORY_TRAINING_PROGRAM_FKEY + ")";
 
-    // TODO: write triggers on the RunningExercise and GymExercise tables that update the exercise order (kind of hard and inefficient in SQL, better to do it with the application itself for now...)
     // trigger for RunningExercise
     private static final String DB_RUNNING_EXERCISE_TRIGGER =
             "create trigger update_exercise_order after insert on RunningExercise " +
