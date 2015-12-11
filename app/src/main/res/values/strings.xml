@@ -7,9 +7,8 @@
     <string name="title_activity_create_new_training_program">Create New Training Program</string>
 
     <string-array name="exercise_mode">
-        <item>Stretching</item>
-        <item>Toning</item>
         <item>Running</item>
+        <item>Gym</item>
     </string-array>
     <string name="title_activity_edit_training_program_exercises">
         EditTrainingProgramExercisesActivity

@@ -1,5 +1,8 @@
 package lu.uni.trailassistant.objects;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by leandrogil on 11/19/15.
  */
@@ -58,4 +61,26 @@ public class RunningExercise extends Exercise {
             default: return SPEED_MODE.NORMAL;
         }
     }
+
+    // Parcelable implementation
+    @Override
+    public void writeToParcel(Parcel out, int flags) {
+        super.writeToParcel(out, flags);
+        out.writeInt(speedMode.ordinal());
+        out.writeInt(distance);
+        out.writeInt(duration);
+    }
+    public static final Creator<RunningExercise> CREATOR = new Parcelable.Creator<RunningExercise>() {
+        public RunningExercise createFromParcel(Parcel in) {
+            int exerciseID = in.readInt();
+            SPEED_MODE speedMode = getSpeedModeFromInt(in.readInt());
+            int distance = in.readInt();
+            int duration = in.readInt();
+            return new RunningExercise(exerciseID, duration, distance, speedMode);
+        }
+
+        public RunningExercise[] newArray(int size) {
+            return new RunningExercise[size];
+        }
+    };
 }

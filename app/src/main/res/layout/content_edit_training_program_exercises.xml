@@ -59,7 +59,8 @@
         android:layout_alignTop="@+id/addExerciseButton"
         android:layout_alignEnd="@+id/exercisesListView"
         android:textSize="14dp"
-        android:drawablePadding="5dp"/>
+        android:drawablePadding="5dp"
+        android:onClick="onClickFinishButton" />
 
     <Button
         android:layout_width="wrap_content"
