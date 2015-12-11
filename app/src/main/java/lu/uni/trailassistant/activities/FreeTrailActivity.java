@@ -31,6 +31,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -61,6 +62,7 @@ public class FreeTrailActivity extends AbstractRouteActivity {
     private double lon;
     private Thread nextLocation;
     private boolean isInForeground;
+    private double totalDistanceInMeter;
 
 
     Handler timerHandler = new Handler();
@@ -97,6 +99,9 @@ public class FreeTrailActivity extends AbstractRouteActivity {
 
         timerTextView = (TextView) findViewById(R.id.timerTextView);
         startAndPauseButton = (Button) findViewById(R.id.start_pause_button);
+
+
+        totalDistanceInMeter = 0;
 
         // Getting Google Play availability status
         int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getBaseContext());
@@ -145,8 +150,8 @@ public class FreeTrailActivity extends AbstractRouteActivity {
 
     private void showResultsToUser() {
         String distanceInKM;
-        float totalDistanceInMeter = 0;
-        float totalDistanceInKM = 0;
+        totalDistanceInMeter = 0;
+        double totalDistanceInKM = 0;
         if (startMarker != null && currentPosition != null) {
             for (int i = 0; i < waypoints.size() - 1; i++) {
                 totalDistanceInMeter += getDistanceBetweenTwoPoints(waypoints.get(i), waypoints.get(i + 1));
@@ -181,8 +186,17 @@ public class FreeTrailActivity extends AbstractRouteActivity {
     }
 
     public void saveRoute() {
-        Intent intent = new Intent(this, AddExerciseActivity.class);
+        Intent intent = new Intent(this, EditTrainingProgramExercisesActivity.class);
         reset();
+        ArrayList<Double> latitudes = new ArrayList<>();
+        ArrayList<Double> longitutdes = new ArrayList<>();
+        for(LatLng point: waypoints){
+            latitudes.add(point.latitude);
+            longitutdes.add(point.longitude);
+        }
+        intent.putExtra("latitudesArrayList", latitudes);
+        intent.putExtra("longitutdesArrayList", longitutdes);
+        intent.putExtra("totalDistanceInMeter", totalDistanceInMeter);
         startActivity(intent);
     }
 
@@ -258,9 +272,9 @@ public class FreeTrailActivity extends AbstractRouteActivity {
     @Override
     public void onLocationChanged(Location location) {
         // redraw the markers when get location update.
-        drawMarker(location);
+        // drawMarker(location);
         waypoints.add(new LatLng(location.getLatitude(), location.getLongitude()));
-        currentPosition = new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude())).title("Current Position");
+        currentPosition = new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude())).title("Me");
         if (startMarker == null) {
             startLocation = location;
             startMarker = new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude())).title("Start Position");
@@ -280,14 +294,14 @@ public class FreeTrailActivity extends AbstractRouteActivity {
     }
 
 
-    private void drawMarker(Location location) {
+    /*private void drawMarker(Location location) {
         // Remove any existing markers on the map
         LatLng currentPosition = new LatLng(location.getLatitude(), location.getLongitude());
         map.addMarker(new MarkerOptions().position(currentPosition).title("ME"));
 
         CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude()));
         map.moveCamera(center);
-    }
+    }*/
 
 
     public Location getStartLocation() {
