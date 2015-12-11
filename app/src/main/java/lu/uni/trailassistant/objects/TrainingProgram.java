@@ -31,7 +31,7 @@ public class TrainingProgram {
     public GPSCoord getLastGPSCoord() { return gpsCoords.getLast(); }
     public int getTrainingProgramID() { return trainingProgramID; }
 
-    public void setProgramName(String name) { this.programName = programName; }
+    public void setTrainingProgramName(String programName) { this.programName = programName; }
     
     public void appendExerciseToTail(Exercise exercise) {
         exercisesQueue.addLast(exercise);

@@ -41,7 +41,7 @@
         android:layout_height="wrap_content"
         android:spinnerMode="dropdown"
         android:layout_below="@+id/remainingDistance"
-        android:layout_toEndOf="@+id/applyButton" />
+        android:layout_toEndOf="@+id/finishButton" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -121,6 +121,7 @@
         android:layout_height="wrap_content"
         android:text="Add"
         android:id="@+id/addButton"
+        android:drawableLeft="@drawable/button_plus_green_small"
         android:onClick="onClickAddButton"
         android:layout_below="@+id/gymModeSpinner"
         android:layout_alignEnd="@+id/spinner_exercise_mode" />
@@ -128,14 +129,16 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Apply"
-        android:id="@+id/applyButton"
+        android:text="Finish"
+        android:id="@+id/finishButton"
+        android:drawableLeft="@drawable/button_ok"
+        android:drawablePadding="5dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:onClick="onClickApplyButton" />
+        android:onClick="onClickFinishButton" />
 
     <Spinner
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/speedModeSpinner"
         android:layout_below="@+id/repetitionsEditText"
@@ -157,7 +160,7 @@
         android:enabled="true" />
 
     <Spinner
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/gymModeSpinner"
         android:layout_below="@+id/speedModeSpinner"
