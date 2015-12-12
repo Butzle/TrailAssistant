@@ -56,7 +56,7 @@ public class FreeTrailActivity extends AbstractRouteActivity {
     private TextView timerTextView;
     private Button startAndPauseButton;
     private MockLocationProvider mock;
-    long startTime = 0;
+    private long startTime = 0;
     private double lat;
     private double lon;
     private Thread nextLocation;
@@ -64,7 +64,7 @@ public class FreeTrailActivity extends AbstractRouteActivity {
     private double totalDistanceInMeter;
 
 
-    Handler timerHandler = new Handler();
+    private Handler timerHandler = new Handler();
 
     // separate Thread for the clock
     Runnable timerRunnable = new Runnable() {

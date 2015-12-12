@@ -30,7 +30,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Start Training Program"
-        android:id="@+id/start_training_program"
+        android:id="@+id/start_training_program_button"
         android:enabled="false"
         android:onClick="onClickStartTrainingProgram"
         android:layout_above="@+id/newTrainingProgram"
@@ -45,7 +45,7 @@
         android:id="@+id/trainingProgramsListView"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_above="@+id/start_training_program"
+        android:layout_above="@+id/start_training_program_button"
         android:background="#b3cff8"
         android:layout_alignParentTop="true"
         android:layout_marginBottom="2dp" />

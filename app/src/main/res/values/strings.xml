@@ -16,5 +16,7 @@
      <string name="title_activity_new_training_program_exercises">
         New Training Program
     </string>
+    <string name="title_activity_predefined_training_program">Predefined Training Program
+    </string>
 
 </resources>

@@ -15,8 +15,9 @@ import lu.uni.trailassistant.R;
 import lu.uni.trailassistant.db.DBConnector;
 import lu.uni.trailassistant.db.TrainingProgramCursorAdapter;
 
+
 public class PredefinedRouteActivity extends AppCompatActivity {
-    private Button editProgramButton;
+    private Button editProgramButton, startTrainingProgramButton;
     private ListView trainingProgramListView;
     private TrainingProgramCursorAdapter tpca;
     private int lastSelectedIndex=-1;
@@ -31,6 +32,10 @@ public class PredefinedRouteActivity extends AppCompatActivity {
         // set references to our elements and disable the "Show history" button on startup
         editProgramButton = (Button) findViewById(R.id.edit_program_button);
         editProgramButton.setEnabled(false);
+
+        startTrainingProgramButton = (Button) findViewById(R.id.start_training_program_button);
+        startTrainingProgramButton.setEnabled(false);
+
         trainingProgramListView = (ListView) findViewById(R.id.trainingProgramsListView);
 
         // populate list view with training programs from the database (coming from a cursor)
@@ -54,6 +59,7 @@ public class PredefinedRouteActivity extends AppCompatActivity {
                 // enable Buttons as soon as user clicks on an item in the ListView
                 //showHistoryButton.setEnabled(true);
                 editProgramButton.setEnabled(true);
+                startTrainingProgramButton.setEnabled(true);
                 // reset background color of last selected ListView item (if needed)
                 Drawable defaultBackground = parent.getChildAt(position).getBackground();
                 if(lastSelectedIndex > -1) {
@@ -69,6 +75,8 @@ public class PredefinedRouteActivity extends AppCompatActivity {
     // Start a new Training Program
     public void onClickStartTrainingProgram(View view) {
         // TODO: launch intent with selected training program
+        Intent intent = new Intent(this, PredefinedTrainingProgramActivity.class);
+        startActivity(intent);
     }
 
     public void newTrainingProgram(View view){

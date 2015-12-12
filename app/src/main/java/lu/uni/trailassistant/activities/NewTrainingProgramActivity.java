@@ -39,7 +39,7 @@ public class NewTrainingProgramActivity extends AppCompatActivity {
 
         if(latitudes != null && longitutdes != null && totalDistanceInMeter != 0) {
             // TODO create new training program
-            //trainingProgram = new TrainingProgram()
+            //trainingProgram = new TrainingProgram(0);
         }
     }
 
