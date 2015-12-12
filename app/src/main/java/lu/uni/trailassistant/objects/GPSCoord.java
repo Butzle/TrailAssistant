@@ -7,19 +7,26 @@ import android.graphics.Path;
  */
 public class GPSCoord {
     private int gpsCoordID;
-    private float longitude, lattitude;
+    private double longitude, lattitude;
 
-    public GPSCoord(int gpsCoordID, float longitude, float lattidude) {
+    public GPSCoord(int gpsCoordID, double longitude, double lattidude) {
         this.gpsCoordID = gpsCoordID;
         setLongitude(longitude);
         setLattitude(lattidude);
     }
 
-    public float getLongitude() { return longitude; }
-    public float getLattitude() { return lattitude; }
+    public GPSCoord() {
+        gpsCoordID = 0;
+        longitude = 0;
+        lattitude = 0;
+    }
 
-    public void setLongitude(float longitude) { this.longitude = longitude; }
-    public void setLattitude(float lattitude) { this.lattitude = lattitude; }
+    public double getLongitude() { return longitude; }
+    public double getLattitude() { return lattitude; }
+    public int getGPSCoordID() { return gpsCoordID; }
+
+    public void setLongitude(double longitude) { this.longitude = longitude; }
+    public void setLattitude(double lattitude) { this.lattitude = lattitude; }
 
     public void generateGoogleMapsDirections() {
         // TODO: generate the Google Maps Direction(s) object through an HTTP request and return it(?)

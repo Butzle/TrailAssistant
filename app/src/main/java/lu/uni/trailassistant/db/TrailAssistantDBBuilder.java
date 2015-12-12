@@ -41,8 +41,8 @@ public class TrailAssistantDBBuilder extends SQLiteOpenHelper {
     // GPSCoord table
     private static final String DB_GPS_COORD_TABLE_NAME = "GPSCoord";
     private static final String DB_GPS_COORD_ID = "_id integer primary key autoincrement";
-    private static final String DB_GPS_COORD_LONGITUDE = "longitude float not null";
-    private static final String DB_GPS_COORD_LATTITUDE = "lattitude float not null";
+    private static final String DB_GPS_COORD_LONGITUDE = "longitude double not null";
+    private static final String DB_GPS_COORD_LATTITUDE = "lattitude double not null";
     private static final String DB_GPS_COORD_ORDER = "coord_order tinyint not null";
     private static final String DB_GPS_COORD_TRAINING_PROGRAM_FKEY = "fkey_training_program_id integer not null references TrainingProgram(_id)";
 
