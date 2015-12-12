@@ -169,7 +169,7 @@ public class GoogleMapsDefineShortestRouteActivity extends AbstractRouteActivity
 
         Intent intent = new Intent(this, NewTrainingProgramActivity.class);
         intent.putExtra("latitudesArrayList", latitudes);
-        intent.putExtra("longitutdesArrayList", longitutdes);
+        intent.putExtra("longitudesArrayList", longitutdes);
         intent.putExtra("totalDistanceInMeter", totalDistanceInMeter);
         startActivity(intent);
     }

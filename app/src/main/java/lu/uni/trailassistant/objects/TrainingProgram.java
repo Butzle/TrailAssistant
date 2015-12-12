@@ -24,6 +24,14 @@ public class TrainingProgram {
         showTrainingInstructions = false;
         gpsCoords = new LinkedList<GPSCoord>();
     }
+
+    public TrainingProgram() {
+        trainingProgramID = 0;      // NOTE: an ID equal to 0 indicates that this program has just been created and does not have a row in the appropriate table in the database
+        programName = "";
+        exercisesQueue = new LinkedList<Exercise>();
+        showTrainingInstructions = false;
+        gpsCoords = new LinkedList<GPSCoord>();
+    }
     
     public String getProgramName(){ return programName; }
     public LinkedList<Exercise> getExercises() { return exercisesQueue; }

@@ -76,8 +76,8 @@ public class DBConnector {
 
     private GPSCoord getGPSCoordFromCursor(Cursor cursor) {
         int gpsCoordID = cursor.getInt(0);
-        float longitude = cursor.getFloat(1);
-        float lattitude = cursor.getFloat(2);
+        double longitude = cursor.getDouble(1);
+        double lattitude = cursor.getDouble(2);
         GPSCoord gpsCoord = new GPSCoord(gpsCoordID, longitude, lattitude);
         return gpsCoord;
     }
@@ -88,23 +88,6 @@ public class DBConnector {
         int caloriesBurned = cursor.getInt(2);
         HistoryRecord historyRecord = new HistoryRecord(historyRecordID, time, caloriesBurned);
         return historyRecord;
-    }
-
-    public int[] getAllTrainingProgramIDs() {
-        String queryString = "select _id from TrainingProgram";
-        Cursor cursor = trailAssistantDB.rawQuery(queryString, null);
-        int totalAmountOfTPs = cursor.getCount();
-        if(totalAmountOfTPs == 0) {
-            return null;
-        }
-        int IDs[] = new int[totalAmountOfTPs];
-        cursor.moveToFirst();
-        for(int i=0; i<totalAmountOfTPs; i++) {
-            IDs[i] = cursor.getInt(0);
-            cursor.moveToNext();
-        }
-        cursor.close();
-        return IDs;
     }
 
     public TrainingProgram getTrainingProgramFromID(int trainingProgramID) {
@@ -171,60 +154,68 @@ public class DBConnector {
         return trailAssistantDB.rawQuery(queryString, null);
     }
 
-    public void writeTrainingProgramToDB(TrainingProgram tp) {
+    public int writeTrainingProgramToDB(TrainingProgram tp) {
+        int lastTrainingProgramID = 0;
         trailAssistantDB.beginTransaction();
-        String insertTrainingProgram = "insert into TrainingProgram values (NULL, ?)";
-        String trainingProgramArgs[] = new String[1];
-        String retrieveTrainingProgramID = "select _id from TrainingProgram order by _id desc limit 1";
+        try {
+            String insertTrainingProgram = "insert into TrainingProgram values (NULL, ?)";
+            String trainingProgramArgs[] = new String[1];
+            String retrieveTrainingProgramID = "select _id from TrainingProgram order by _id desc limit 1";
 
-        // write training program to DB and retrieve new ID
-        trailAssistantDB.execSQL(insertTrainingProgram);
-        Cursor cursor = trailAssistantDB.rawQuery(retrieveTrainingProgramID, null);
-        cursor.moveToFirst();
-        int lastTrainingProgramID = cursor.getInt(0);
-        cursor.close();
+            // write training program to DB and retrieve new ID
+            trailAssistantDB.execSQL(insertTrainingProgram);
+            Cursor cursor = trailAssistantDB.rawQuery(retrieveTrainingProgramID, null);
+            cursor.moveToFirst();
+            lastTrainingProgramID = cursor.getInt(0);
+            cursor.close();
 
-        // insert exercises into their respective tables
-        ListIterator<Exercise> exerciseIterator = tp.getExercisesAsListIterator();
-        int order = 1;
-        while(exerciseIterator.hasNext()) {
-            Exercise exercise = exerciseIterator.next();
-            if(exercise instanceof RunningExercise) {
-                RunningExercise runningExercise = (RunningExercise) exercise;
-                ContentValues runningExerciseContentValues = new ContentValues();
-                runningExerciseContentValues.put("duration", runningExercise.getDuration());
-                runningExerciseContentValues.put("distance", runningExercise.getDistance());
-                runningExerciseContentValues.put("speed_mode", runningExercise.getSpeedMode().ordinal());
-                runningExerciseContentValues.put("exercise_order", order);
-                runningExerciseContentValues.put("fkey_training_program_id", lastTrainingProgramID);
-                trailAssistantDB.insert("RunningExercise", null, runningExerciseContentValues);
-            } else if(exercise instanceof GymExercise) {
-                GymExercise gymExercise = (GymExercise) exercise;
-                ContentValues gymExerciseContentValues = new ContentValues();
-                gymExerciseContentValues.put("duration", gymExercise.getDuration());
-                gymExerciseContentValues.put("repetitions", gymExercise.getRepetitions());
-                gymExerciseContentValues.put("gym_mode", gymExercise.getGymMode().ordinal());
-                gymExerciseContentValues.put("exercise_order", order);
-                gymExerciseContentValues.put("fkey_training_program_id", lastTrainingProgramID);
-                trailAssistantDB.insert("GymExercise", null, gymExerciseContentValues);
+            // insert exercises into their respective tables
+            ListIterator<Exercise> exerciseIterator = tp.getExercisesAsListIterator();
+            int order = 1;
+            while (exerciseIterator.hasNext()) {
+                Exercise exercise = exerciseIterator.next();
+                if (exercise instanceof RunningExercise) {
+                    RunningExercise runningExercise = (RunningExercise) exercise;
+                    ContentValues runningExerciseContentValues = new ContentValues();
+                    runningExerciseContentValues.put("duration", runningExercise.getDuration());
+                    runningExerciseContentValues.put("distance", runningExercise.getDistance());
+                    runningExerciseContentValues.put("speed_mode", runningExercise.getSpeedMode().ordinal());
+                    runningExerciseContentValues.put("exercise_order", order);
+                    runningExerciseContentValues.put("fkey_training_program_id", lastTrainingProgramID);
+                    trailAssistantDB.insert("RunningExercise", null, runningExerciseContentValues);
+                } else if (exercise instanceof GymExercise) {
+                    GymExercise gymExercise = (GymExercise) exercise;
+                    ContentValues gymExerciseContentValues = new ContentValues();
+                    gymExerciseContentValues.put("duration", gymExercise.getDuration());
+                    gymExerciseContentValues.put("repetitions", gymExercise.getRepetitions());
+                    gymExerciseContentValues.put("gym_mode", gymExercise.getGymMode().ordinal());
+                    gymExerciseContentValues.put("exercise_order", order);
+                    gymExerciseContentValues.put("fkey_training_program_id", lastTrainingProgramID);
+                    trailAssistantDB.insert("GymExercise", null, gymExerciseContentValues);
+                }
+                order++;
             }
-            order++;
-        }
 
-        // insert GPS coordinates
-        ListIterator<GPSCoord> gpsCoordIterator = tp.getGPSCoordsAsListIterator();
-        order = 1;
-        while(gpsCoordIterator.hasNext()) {
-            GPSCoord gpsCoord = gpsCoordIterator.next();
-            ContentValues gpsCoordContentValues = new ContentValues();
-            gpsCoordContentValues.put("longitude", gpsCoord.getLongitude());
-            gpsCoordContentValues.put("lattitude", gpsCoord.getLattitude());
-            gpsCoordContentValues.put("coord_order", order);
-            gpsCoordContentValues.put("fkey_training_program_id", lastTrainingProgramID);
-            trailAssistantDB.insert("GPSCoord", null, gpsCoordContentValues);
-            order++;
+            // insert GPS coordinates
+            ListIterator<GPSCoord> gpsCoordIterator = tp.getGPSCoordsAsListIterator();
+            order = 1;
+            while (gpsCoordIterator.hasNext()) {
+                GPSCoord gpsCoord = gpsCoordIterator.next();
+                ContentValues gpsCoordContentValues = new ContentValues();
+                gpsCoordContentValues.put("longitude", gpsCoord.getLongitude());
+                gpsCoordContentValues.put("lattitude", gpsCoord.getLattitude());
+                gpsCoordContentValues.put("coord_order", order);
+                gpsCoordContentValues.put("fkey_training_program_id", lastTrainingProgramID);
+                trailAssistantDB.insert("GPSCoord", null, gpsCoordContentValues);
+                order++;
+            }
+            trailAssistantDB.setTransactionSuccessful();
+        } catch (Exception e) {
+            Log.e(DBConnector.class.getName(), "Error occured during insert transaction! Changes will be rolled back.");
+        } finally {
+            trailAssistantDB.endTransaction();
         }
-        trailAssistantDB.endTransaction();
+        return lastTrainingProgramID;
     }
 
     public void updateExistingTrainingProgram(TrainingProgram tp) {
@@ -280,7 +271,28 @@ public class DBConnector {
                 order++;
             }
 
-            // TODO: update GPS coordinates in the database
+            // update GPS coordinates
+            Iterator<GPSCoord> gpsCoordsIterator = tp.getGPSCoordsAsListIterator();
+            order=1;
+            while(iterator.hasNext()) {
+                GPSCoord gpsCoord = gpsCoordsIterator.next();
+                contentValues = new ContentValues();
+                contentValues.put("lattitude", gpsCoord.getLattitude());
+                contentValues.put("longitude", gpsCoord.getLongitude());
+                contentValues.put("coord_order", order);
+                contentValues.put("fkey_training_program_id", tp.getTrainingProgramID());
+                if(gpsCoord.getGPSCoordID() > 0) {
+                    // if the GPS coordinate has an ID that is not 0, then it already has a record in the database
+                    whereClause = "_id=?";
+                    whereArgs = new String[]{Integer.toString(gpsCoord.getGPSCoordID())};
+                    trailAssistantDB.update("GPSCoord", contentValues, whereClause, whereArgs);
+                } else {
+                    // otherwise, create a new record with a new ID for that GPS coordinate and add reference to the correct training program
+                    contentValues.put("fkey_training_program_id", tp.getTrainingProgramID());
+                    trailAssistantDB.insert("GPSCoord", null, contentValues);
+                }
+                order++;
+            }
 
             trailAssistantDB.setTransactionSuccessful();
         } catch (Exception e) {
