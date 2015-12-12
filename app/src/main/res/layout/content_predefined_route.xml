@@ -16,45 +16,49 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Define New Training Program Shortest Path"
+        android:text="Define A New Training Program For Shortest Path"
         android:id="@+id/newTrainingProgram"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
         android:onClick="newTrainingProgram"
         android:background="#7678fa"
-        android:layout_alignRight="@+id/showHistoryButton"
-        android:layout_alignEnd="@+id/showHistoryButton" />
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="44dp"
+        android:layout_alignEnd="@+id/edit_program_button"
+        android:layout_marginTop="1dp" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Show history"
-        android:id="@+id/showHistoryButton"
-        android:layout_marginBottom="40dp"
+        android:text="Start Training Program"
+        android:id="@+id/start_training_program"
         android:enabled="false"
-        android:onClick="onClickShowHistoryButton"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:onClick="onClickStartTrainingProgram"
+        android:layout_above="@+id/newTrainingProgram"
+        android:layout_alignParentStart="true"
+        android:background="#7678fa"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="1dp" />
 
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/trainingProgramsListView"
-        android:layout_below="@+id/newTrainingProgram"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_above="@+id/showHistoryButton" />
+        android:layout_above="@+id/start_training_program"
+        android:background="#b3cff8"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="2dp" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Open program"
-        android:id="@+id/openProgramButton"
+        android:text="Edit Program"
+        android:id="@+id/edit_program_button"
         android:layout_below="@+id/trainingProgramsListView"
         android:layout_alignRight="@+id/trainingProgramsListView"
         android:layout_alignEnd="@+id/trainingProgramsListView"
         android:enabled="false"
-        android:onClick="onClickOpenProgramButton" />
+        android:onClick="onClickEditProgramButton"
+        android:background="#7678fa" />
 </RelativeLayout>

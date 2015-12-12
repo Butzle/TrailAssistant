@@ -20,6 +20,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 
+import java.util.ArrayList;
+
 import lu.uni.trailassistant.R;
 
 /*
@@ -30,6 +32,10 @@ public class GoogleMapsDefineRouteActivity extends AbstractRouteActivity impleme
     private MarkerOptions origin;
     private MarkerOptions destination;
 
+    // start and destination
+    private LatLng startPoint, destinationPoint;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +44,9 @@ public class GoogleMapsDefineRouteActivity extends AbstractRouteActivity impleme
         // initialize object attributes
         origin = null;
         destination = null;
+
+        startPoint = null;
+        destinationPoint = null;
 
         // Getting Google Play availability status
         int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getBaseContext());
@@ -75,6 +84,7 @@ public class GoogleMapsDefineRouteActivity extends AbstractRouteActivity impleme
     public void onMapClick(LatLng point) {
         if(origin != null) {
             map.clear();
+            startPoint = point;
             origin = new MarkerOptions().position(point).title("Origin");
             origin.icon(BitmapDescriptorFactory.fromResource(R.drawable.start_blue));
             createOriginMarker();
@@ -86,6 +96,8 @@ public class GoogleMapsDefineRouteActivity extends AbstractRouteActivity impleme
         if(origin != null) {
             // remove all markers (origin and destination)
             map.clear();
+
+            destinationPoint = point;
 
             // create the destination marker
             destination = new MarkerOptions().position(point).title("Destination");
@@ -124,11 +136,32 @@ public class GoogleMapsDefineRouteActivity extends AbstractRouteActivity impleme
 
 
 
-    public void createRoute(View view) {
+    public void defineTrainingProgram(View view) {
+        double totalDistanceInMeter = 0;
         if (destination != null) {
-            float distance = getDistanceBetweenTwoPoints(origin.getPosition(), destination.getPosition());
+            totalDistanceInMeter = getDistanceBetweenTwoPoints(origin.getPosition(), destination.getPosition());
         }
-        Intent intent = new Intent(this, AddExerciseActivity.class);
+
+        ArrayList<Double> latitudes = new ArrayList<>();
+        ArrayList<Double> longitutdes = new ArrayList<>();
+
+        if(startPoint != null && destinationPoint != null) {
+
+            latitudes.add(startPoint.latitude);
+            latitudes.add(destinationPoint.latitude);
+
+            longitutdes.add(startPoint.longitude);
+            longitutdes.add(destinationPoint.longitude);
+
+            waypoints.add(startPoint);
+            waypoints.add(destinationPoint);
+        }
+
+
+        Intent intent = new Intent(this, NewTrainingProgramActivity.class);
+        intent.putExtra("latitudesArrayList", latitudes);
+        intent.putExtra("longitutdesArrayList", longitutdes);
+        intent.putExtra("totalDistanceInMeter", totalDistanceInMeter);
         startActivity(intent);
     }
 

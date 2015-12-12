@@ -55,7 +55,6 @@ public class FreeTrailActivity extends AbstractRouteActivity {
     private MarkerOptions currentPosition;
     private TextView timerTextView;
     private Button startAndPauseButton;
-    private List<LatLng> waypoints;
     private MockLocationProvider mock;
     long startTime = 0;
     private double lat;
@@ -92,8 +91,6 @@ public class FreeTrailActivity extends AbstractRouteActivity {
         isMockEnabled = false;
 
         isInForeground = true;
-
-        waypoints = new ArrayList<LatLng>();
         lat = 49.600896;
         lon = 6.154168;
 
@@ -186,7 +183,7 @@ public class FreeTrailActivity extends AbstractRouteActivity {
     }
 
     public void saveRoute() {
-        Intent intent = new Intent(this, EditTrainingProgramExercisesActivity.class);
+        Intent intent = new Intent(this, NewTrainingProgramActivity.class);
         reset();
         ArrayList<Double> latitudes = new ArrayList<>();
         ArrayList<Double> longitutdes = new ArrayList<>();

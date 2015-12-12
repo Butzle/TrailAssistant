@@ -11,7 +11,10 @@
         <item>Gym</item>
     </string-array>
     <string name="title_activity_edit_training_program_exercises">
-        EditTrainingProgramExercisesActivity
+        Edit Training Program
+    </string>
+     <string name="title_activity_new_training_program_exercises">
+        New Training Program
     </string>
 
 </resources>

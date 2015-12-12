@@ -33,7 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Define Training Program For Selected Route"
-            android:onClick="createRoute"
+            android:onClick="defineTrainingProgram"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:id="@+id/show_training_program" />

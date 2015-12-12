@@ -58,7 +58,7 @@ public class EditTrainingProgramExercisesActivity extends AppCompatActivity {
         startActivityForResult(intent, ADD_EXERCISES);
     }
 
-    public void onClickSaveChangesButton(View view) {
+    public void onClickSaveButton(View view) {
         DBConnector dbc = new DBConnector(this);
         dbc.openConnection();
         trainingProgram.setTrainingProgramName(trainingProgramNameEditText.getText().toString());

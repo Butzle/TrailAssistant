@@ -29,6 +29,7 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import lu.uni.trailassistant.R;
 
@@ -48,12 +49,14 @@ public abstract class AbstractRouteActivity extends FragmentActivity implements 
     protected LocationManager service;
     protected String provider;
     protected boolean isMockEnabled;
+    protected List<LatLng> waypoints;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         map = null;
         service = null;
+        waypoints = new ArrayList<LatLng>();
         // create a new array of polylines
         polylines = new ArrayList<>();
         isMockEnabled = isMockLocationEnabled();

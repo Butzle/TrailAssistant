@@ -48,19 +48,19 @@
         android:layout_below="@+id/exercisesTextView"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_above="@+id/saveChangesButton" />
+        android:layout_above="@+id/saveButton" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Save changes"
-        android:id="@+id/saveChangesButton"
+        android:text="Save"
+        android:id="@+id/saveButton"
         android:drawableLeft="@drawable/save"
         android:layout_alignTop="@+id/addExerciseButton"
         android:layout_alignEnd="@+id/exercisesListView"
         android:textSize="13dp"
         android:drawablePadding="5dp"
-        android:onClick="onClickSaveChangesButton" />
+        android:onClick="onClickSaveButton" />
 
     <Button
         android:layout_width="wrap_content"
