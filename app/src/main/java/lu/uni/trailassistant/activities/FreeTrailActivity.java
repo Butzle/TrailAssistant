@@ -137,7 +137,6 @@ public class FreeTrailActivity extends TrailActivity {
 
     public void saveRoute() {
         Intent intent = new Intent(this, NewTrainingProgramActivity.class);
-        reset();
         ArrayList<Double> latitudes = new ArrayList<>();
         ArrayList<Double> longitutdes = new ArrayList<>();
         for(LatLng point: waypoints){
@@ -147,6 +146,7 @@ public class FreeTrailActivity extends TrailActivity {
         intent.putExtra("latitudesArrayList", latitudes);
         intent.putExtra("longitutdesArrayList", longitutdes);
         intent.putExtra("totalDistanceInMeter", totalDistanceInMeter);
+        reset();
         startActivity(intent);
     }
 
@@ -274,5 +274,22 @@ public class FreeTrailActivity extends TrailActivity {
             // launch the request
             routing.execute();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        reset();
+
+    }
+
+    public void reset() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        isInForeground = false;
+        waypoints = new ArrayList<LatLng>();
+        service.removeUpdates(this);
+        map.clear();
     }
 }

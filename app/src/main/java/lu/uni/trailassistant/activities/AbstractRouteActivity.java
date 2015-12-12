@@ -48,7 +48,6 @@ public abstract class AbstractRouteActivity extends FragmentActivity implements 
     protected GoogleMap map;
     protected LocationManager service;
     protected String provider;
-    protected boolean isMockEnabled;
     protected List<LatLng> waypoints;
 
     @Override
@@ -59,18 +58,10 @@ public abstract class AbstractRouteActivity extends FragmentActivity implements 
         waypoints = new ArrayList<LatLng>();
         // create a new array of polylines
         polylines = new ArrayList<>();
-        isMockEnabled = isMockLocationEnabled();
-
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-
-        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || isMockEnabled){
-
-        }else{
-            showGPSDisabledAlertToUser();
-        }
     }
 
-    private void showGPSDisabledAlertToUser(){
+    protected void showGPSDisabledAlertToUser(){
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setMessage("GPS is disabled in your device. Would you like to enable it?")
                 .setCancelable(false)
@@ -101,14 +92,6 @@ public abstract class AbstractRouteActivity extends FragmentActivity implements 
 
         // Getting the name of the best provider
         provider = service.getBestProvider(criteria, true);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-
-        // test if debuggable mode and mock location are disabled
-        if (!(((getApplication().getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0) && isMockEnabled)){
-            service.requestLocationUpdates(provider, 2000, 0, this);
-        }
     }
 
 
@@ -183,30 +166,5 @@ public abstract class AbstractRouteActivity extends FragmentActivity implements 
 
     }
 
-    // http://stackoverflow.com/questions/33003553/how-to-read-selected-mock-location-app-in-android-m-api-23/33066797#33066797
-    public boolean isMockLocationEnabled()
-    {
-        boolean isMockLocation = false;
-        try
-        {
-            //if marshmallow
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            {
-                AppOpsManager opsManager = (AppOpsManager) this.getApplicationContext().getSystemService(Context.APP_OPS_SERVICE);
-                isMockLocation = (opsManager.checkOp(AppOpsManager.OPSTR_MOCK_LOCATION, android.os.Process.myUid(), BuildConfig.APPLICATION_ID)== AppOpsManager.MODE_ALLOWED);
-            }
-            else
-            {
-                // in marshmallow this will always return true
-                isMockLocation = !android.provider.Settings.Secure.getString(this.getApplicationContext().getContentResolver(), "mock_location").equals("0");
-            }
-        }
-        catch (Exception e)
-        {
-            return isMockLocation;
-        }
-
-        return isMockLocation;
-    }
 
 }

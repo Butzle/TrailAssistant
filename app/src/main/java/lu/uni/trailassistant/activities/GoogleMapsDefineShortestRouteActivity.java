@@ -3,8 +3,10 @@ package lu.uni.trailassistant.activities;
 import android.Manifest;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.view.View;
@@ -48,6 +50,12 @@ public class GoogleMapsDefineShortestRouteActivity extends AbstractRouteActivity
         startPoint = null;
         destinationPoint = null;
 
+        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            showGPSDisabledAlertToUser();
+        }
+
         // Getting Google Play availability status
         int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getBaseContext());
 
@@ -77,6 +85,7 @@ public class GoogleMapsDefineShortestRouteActivity extends AbstractRouteActivity
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
+        service.requestLocationUpdates(provider, 2000, 0, this);
 
     }
 
