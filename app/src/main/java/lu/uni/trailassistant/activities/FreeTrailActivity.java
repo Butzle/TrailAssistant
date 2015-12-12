@@ -31,9 +31,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 import lu.uni.trailassistant.R;
@@ -41,22 +39,14 @@ import lu.uni.trailassistant.mock.MockLocationProvider;
 
 
 
-/*
- * Current Location : http://stackoverflow.com/questions/16005223/android-google-map-api-v2-current-location
- * Timer : http://stackoverflow.com/questions/4597690/android-timer-how
- */
-
-public class FreeTrailActivity extends AbstractRouteActivity {
+public class FreeTrailActivity extends TrailActivity {
 
     // where the user is located when he starts the free trail activity. This will be taken as start
     // position for his training program.
     private Location startLocation;
     private MarkerOptions startMarker;
     private MarkerOptions currentPosition;
-    private TextView timerTextView;
-    private Button startAndPauseButton;
     private MockLocationProvider mock;
-    private long startTime = 0;
     private double lat;
     private double lon;
     private Thread nextLocation;
@@ -64,27 +54,9 @@ public class FreeTrailActivity extends AbstractRouteActivity {
     private double totalDistanceInMeter;
 
 
-    private Handler timerHandler = new Handler();
-
-    // separate Thread for the clock
-    Runnable timerRunnable = new Runnable() {
-        @Override
-        public void run() {
-            long millis = System.currentTimeMillis() - startTime;
-            int seconds = (int) (millis / 1000);
-            int minutes = seconds / 60;
-            seconds = seconds % 60;
-
-            timerTextView.setText(String.format("%d:%02d", minutes, seconds));
-
-            timerHandler.postDelayed(this, 500);
-        }
-    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_free_trail);
         startLocation = null;
         currentPosition = null;
         mock = null;
@@ -93,9 +65,6 @@ public class FreeTrailActivity extends AbstractRouteActivity {
         isInForeground = true;
         lat = 49.600896;
         lon = 6.154168;
-
-        timerTextView = (TextView) findViewById(R.id.timerTextView);
-        startAndPauseButton = (Button) findViewById(R.id.start_pause_button);
 
 
         totalDistanceInMeter = 0;
@@ -122,22 +91,6 @@ public class FreeTrailActivity extends AbstractRouteActivity {
 
     }
 
-    public void startOrPause(View view) {
-        if (startAndPauseButton.getText().equals("Reset")) {
-            timerHandler.removeCallbacks(timerRunnable);
-            startAndPauseButton.setText("Start");
-        } else {
-            startTime = System.currentTimeMillis();
-            timerHandler.postDelayed(timerRunnable, 0);
-            startAndPauseButton.setText("Reset");
-        }
-    }
-
-
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
 
     public void onFinishedExercise(View view) {
         showResultsToUser();
@@ -322,24 +275,4 @@ public class FreeTrailActivity extends AbstractRouteActivity {
             routing.execute();
         }
     }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        reset();
-
-    }
-
-    public void reset() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        isInForeground = false;
-        waypoints = new ArrayList<LatLng>();
-        service.removeUpdates(this);
-    }
-
-
-
-
 }

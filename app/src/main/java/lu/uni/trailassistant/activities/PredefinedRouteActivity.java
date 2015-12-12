@@ -75,12 +75,12 @@ public class PredefinedRouteActivity extends AppCompatActivity {
     // Start a new Training Program
     public void onClickStartTrainingProgram(View view) {
         // TODO: launch intent with selected training program
-        Intent intent = new Intent(this, PredefinedTrainingProgramActivity.class);
+        Intent intent = new Intent(this, PredefinedTrailTrainingProgramActivity.class);
         startActivity(intent);
     }
 
     public void newTrainingProgram(View view){
-        Intent intent = new Intent(this, GoogleMapsDefineRouteActivity.class);
+        Intent intent = new Intent(this, GoogleMapsDefineShortestRouteActivity.class);
         startActivity(intent);
     }
 

@@ -27,7 +27,7 @@ import lu.uni.trailassistant.R;
 /*
  * Current Location : http://stackoverflow.com/questions/16005223/android-google-map-api-v2-current-location
  */
-public class GoogleMapsDefineRouteActivity extends AbstractRouteActivity implements GoogleMap.OnMapLongClickListener, GoogleMap.OnMapClickListener {
+public class GoogleMapsDefineShortestRouteActivity extends AbstractRouteActivity implements GoogleMap.OnMapLongClickListener, GoogleMap.OnMapClickListener {
 
     private MarkerOptions origin;
     private MarkerOptions destination;

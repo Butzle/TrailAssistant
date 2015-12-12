@@ -5,11 +5,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -20,14 +16,17 @@ import java.util.ArrayList;
 
 import lu.uni.trailassistant.R;
 
-public class PredefinedTrainingProgramActivity extends AbstractRouteActivity {
-
-    private TextView timerTextView;
+/**
+ * Created by Jo on 12/12/15.
+ * Activity used to define both the Free Trail Activity and the Predefined Route Activity
+ */
+public abstract class TrailActivity extends AbstractRouteActivity {
+    protected TextView timerTextView;
     private long startTime = 0;
     private Button startAndPauseButton;
-    private boolean isInForeground;
+    protected boolean isInForeground;
 
-    private Handler timerHandler = new Handler();
+    protected Handler timerHandler = new Handler();
 
     // separate Thread for the clock
     Runnable timerRunnable = new Runnable() {
@@ -47,7 +46,7 @@ public class PredefinedTrainingProgramActivity extends AbstractRouteActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_predefined_training_program);
+        setContentView(R.layout.activity_trail);
 
         timerTextView = (TextView) findViewById(R.id.timerTextView);
         startAndPauseButton = (Button) findViewById(R.id.start_pause_button);
@@ -90,6 +89,10 @@ public class PredefinedTrainingProgramActivity extends AbstractRouteActivity {
         }
         isInForeground = false;
         waypoints = new ArrayList<LatLng>();
-        service.removeUpdates(this);
+        if(service != null) {
+            service.removeUpdates(this);
+        }
     }
+
+    public abstract void onFinishedExercise(View view);
 }
