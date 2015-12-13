@@ -28,10 +28,6 @@ public class GPSCoord {
     public void setLongitude(double longitude) { this.longitude = longitude; }
     public void setLattitude(double lattitude) { this.lattitude = lattitude; }
 
-    public void generateGoogleMapsDirections() {
-        // TODO: generate the Google Maps Direction(s) object through an HTTP request and return it(?)
-    }
-
     public String toString() {
         return "Longitude=" + longitude + ", Lattitude=" + lattitude;
     }

@@ -138,10 +138,10 @@ public class FreeTrailActivity extends TrailActivity {
     public void saveRoute() {
         Intent intent = new Intent(this, NewTrainingProgramActivity.class);
         ArrayList<Double> latitudes = new ArrayList<Double>();
-        ArrayList<Double> longitutdes = new ArrayList<Double>();
+        ArrayList<Double> longitudes = new ArrayList<Double>();
         for(LatLng point: waypoints){
             latitudes.add(point.latitude);
-            longitutdes.add(point.longitude);
+            longitudes.add(point.longitude);
 
            /* Context context = getApplicationContext();
             int duration = Toast.LENGTH_SHORT;
@@ -151,7 +151,7 @@ public class FreeTrailActivity extends TrailActivity {
             toast.show();*/
         }
         intent.putExtra("latitudesArrayList", latitudes);
-        intent.putExtra("longitudesArrayList", longitutdes);
+        intent.putExtra("longitudesArrayList", longitudes);
         intent.putExtra("totalDistanceInMeter", totalDistanceInMeter);
         reset();
         startActivity(intent);

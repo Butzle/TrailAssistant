@@ -74,20 +74,22 @@ public class PredefinedRouteActivity extends AppCompatActivity {
 
     // Start a new Training Program
     public void onClickStartTrainingProgram(View view) {
-        // TODO: launch intent with selected training program
         Intent intent = new Intent(this, PredefinedTrailTrainingProgramActivity.class);
+        //Log.i(PredefinedRouteActivity.class.getName(), "Training Program ID set by intent: " + trainingProgramRowID);
+        intent.putExtra("training_program_id", tpca.getItemId(lastSelectedIndex));
         startActivity(intent);
     }
 
     public void newTrainingProgram(View view){
         Intent intent = new Intent(this, GoogleMapsDefineShortestRouteActivity.class);
+        //Log.i(PredefinedRouteActivity.class.getName(), "Training Program ID set by intent: " + trainingProgramRowID);
+        intent.putExtra("training_program_id", tpca.getItemId(lastSelectedIndex));
         startActivity(intent);
     }
 
     // Edit an existing training program
     public void onClickEditProgramButton(View view) {
         Intent intent = new Intent(this, EditTrainingProgramExercisesActivity.class);
-        long trainingProgramRowID = tpca.getItemId(lastSelectedIndex);
         //Log.i(PredefinedRouteActivity.class.getName(), "Training Program ID set by intent: " + trainingProgramRowID);
         intent.putExtra("training_program_id", tpca.getItemId(lastSelectedIndex));
         startActivity(intent);

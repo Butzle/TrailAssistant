@@ -158,18 +158,19 @@ public class DBConnector {
         int lastTrainingProgramID = 0;
         trailAssistantDB.beginTransaction();
         try {
-            String insertTrainingProgram = "insert into TrainingProgram values (NULL, ?)";
-            String trainingProgramArgs[] = new String[1];
-            String retrieveTrainingProgramID = "select _id from TrainingProgram order by _id desc limit 1";
+            // write the new training program to DB
+            ContentValues cv = new ContentValues();
+            cv.put("name", tp.getProgramName());
+            trailAssistantDB.insert("TrainingProgram", null, cv);
 
-            // write training program to DB and retrieve new ID
-            trailAssistantDB.execSQL(insertTrainingProgram);
+            // retrieve ID of the training program that was just added
+            String retrieveTrainingProgramID = "select _id from TrainingProgram order by _id desc limit 1";
             Cursor cursor = trailAssistantDB.rawQuery(retrieveTrainingProgramID, null);
             cursor.moveToFirst();
             lastTrainingProgramID = cursor.getInt(0);
             cursor.close();
 
-            // insert exercises into their respective tables
+            // insert exercises into their respective tables, using the training program ID as a foreign key reference
             ListIterator<Exercise> exerciseIterator = tp.getExercisesAsListIterator();
             int order = 1;
             while (exerciseIterator.hasNext()) {
