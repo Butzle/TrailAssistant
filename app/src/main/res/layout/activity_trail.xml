@@ -64,5 +64,7 @@
 
     </RelativeLayout>
 
+    <include layout="@layout/content_trail" />
+
 
 </RelativeLayout>

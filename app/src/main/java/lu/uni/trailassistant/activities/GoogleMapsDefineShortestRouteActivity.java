@@ -138,9 +138,6 @@ public class GoogleMapsDefineShortestRouteActivity extends AbstractRouteActivity
 
         // add the marker to the map
         map.addMarker(destination);
-
-        // center the camera with a zoom of 16
-       // map.moveCamera(CameraUpdateFactory.newLatLngZoom(destination.getPosition(), 16));
     }
 
 
@@ -152,15 +149,15 @@ public class GoogleMapsDefineShortestRouteActivity extends AbstractRouteActivity
         }
 
         ArrayList<Double> latitudes = new ArrayList<>();
-        ArrayList<Double> longitutdes = new ArrayList<>();
+        ArrayList<Double> longitudes = new ArrayList<>();
 
         if(startPoint != null && destinationPoint != null) {
 
             latitudes.add(startPoint.latitude);
             latitudes.add(destinationPoint.latitude);
 
-            longitutdes.add(startPoint.longitude);
-            longitutdes.add(destinationPoint.longitude);
+            longitudes.add(startPoint.longitude);
+            longitudes.add(destinationPoint.longitude);
 
             waypoints.add(startPoint);
             waypoints.add(destinationPoint);
@@ -169,7 +166,7 @@ public class GoogleMapsDefineShortestRouteActivity extends AbstractRouteActivity
 
         Intent intent = new Intent(this, NewTrainingProgramActivity.class);
         intent.putExtra("latitudesArrayList", latitudes);
-        intent.putExtra("longitudesArrayList", longitutdes);
+        intent.putExtra("longitudesArrayList", longitudes);
         intent.putExtra("totalDistanceInMeter", totalDistanceInMeter);
         startActivity(intent);
     }
@@ -181,6 +178,7 @@ public class GoogleMapsDefineShortestRouteActivity extends AbstractRouteActivity
             LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
             origin = new MarkerOptions().position(userLocation).title("Origin");
             origin.icon(BitmapDescriptorFactory.fromResource(R.drawable.start_blue));
+            startPoint = userLocation;
             // add the marker to the map
             createOriginMarker();
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {

@@ -32,10 +32,12 @@ public class AddExerciseActivity extends AppCompatActivity {
     private HashMap<Integer, Exercise> exercisesToBeAdded;
     private int currentExerciseIndex = 0;
 
-    private TextView distanceTextView, durationTextView, repetitionsTextView, speedModeTextView, gymModeTextView;
+    private TextView distanceTextView, durationTextView, repetitionsTextView, speedModeTextView, gymModeTextView, totalRemainingDistance;
     private Spinner spinnerExerciseMode, speedModeSpinner, gymModeSpinner;
     private EditText distanceEditText, durationEditText, repetitionsEditText;
-    private Button addButton;
+    private Button addButton, finishButton;
+    private int  totalRemainingDistanceInMeter;
+    private String totalRemainingDistanceToDefine;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +45,15 @@ public class AddExerciseActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_exercise);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        totalRemainingDistanceInMeter = (int)(getIntent().getDoubleExtra("totalDistanceInMeter", 0)+ 0.5d);
+        totalRemainingDistance = (TextView) findViewById(R.id.total_remaining_distance);
+        totalRemainingDistanceToDefine = totalRemainingDistance.getText().toString();
+        totalRemainingDistance.setText(totalRemainingDistance.getText() +" "+ totalRemainingDistanceInMeter);
+
+        // Enable finish button only when entire distance is defined
+        finishButton = (Button) findViewById(R.id.finishButton);
+        finishButton.setEnabled(false);
 
         // set references to our widgets
         distanceTextView = (TextView) findViewById(R.id.distanceTextView);
@@ -57,6 +68,7 @@ public class AddExerciseActivity extends AppCompatActivity {
         gymModeSpinner = (Spinner) findViewById(R.id.gymModeSpinner);
         spinnerExerciseMode = (Spinner) findViewById(R.id.spinner_exercise_mode);
         addButton = (Button) findViewById(R.id.addButton);
+
 
         // Create ArrayAdapters using the string array/enums and a default spinner layout
         speedModeSpinner.setAdapter(new ArrayAdapter<SPEED_MODE>(this, android.R.layout.simple_spinner_item, SPEED_MODE.values()));
@@ -121,7 +133,11 @@ public class AddExerciseActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 if (checkRunningExerciseConditions()) {
-                    addButton.setEnabled(true);
+                    if( totalRemainingDistanceInMeter - Integer.parseInt(distanceEditText.getText().toString()) > 0) {
+                        addButton.setEnabled(true);
+                    }else if (totalRemainingDistanceInMeter - Integer.parseInt(distanceEditText.getText().toString()) < 0) {
+                        addButton.setEnabled(false);
+                    }
                 } else {
                     addButton.setEnabled(false);
                 }
@@ -151,6 +167,7 @@ public class AddExerciseActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 if (checkGymExerciseConditions()) {
+
                     addButton.setEnabled(true);
                 } else {
                     addButton.setEnabled(false);
@@ -208,8 +225,20 @@ public class AddExerciseActivity extends AppCompatActivity {
             RunningExercise runningExercise = new RunningExercise(0, 0, Integer.parseInt(distanceEditText.getText().toString()), (SPEED_MODE)speedModeSpinner.getSelectedItem());
             exercisesToBeAdded.put(currentExerciseIndex, runningExercise);
             currentExerciseIndex++;
+            totalRemainingDistanceInMeter -= Integer.parseInt(distanceEditText.getText().toString());
+            totalRemainingDistance.setText(totalRemainingDistanceToDefine +" "+ totalRemainingDistanceInMeter);
+            if(totalRemainingDistanceInMeter == 0){
+                addButton.setEnabled(false);
+                finishButton.setEnabled(true);
+            }
+            distanceEditText.setText("");
+
             Toast.makeText(this, "Running exercise was created successfully!", Toast.LENGTH_SHORT).show();
         } else if(spinnerExerciseMode.getSelectedItem().toString().equals("Gym")) {
+            addButton.setEnabled(true);
+            if(totalRemainingDistanceInMeter == 0){
+                finishButton.setEnabled(true);
+            }
             GymExercise gymExercise = new GymExercise(0, Integer.parseInt(durationEditText.getText().toString()), Integer.parseInt(repetitionsEditText.getText().toString()), (GYM_MODE)gymModeSpinner.getSelectedItem());
             exercisesToBeAdded.put(currentExerciseIndex, gymExercise);
             currentExerciseIndex++;

@@ -35,6 +35,11 @@ public class EditTrainingProgramExercisesActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
+        // No distance left to define => if button enabled here, need to check if the user always defines exactly the total distance
+        addExerciseButton = (Button)findViewById(R.id.add_exercise_button);
+        addExerciseButton.setEnabled(false);
+
         // retrieve training program ID from intent and the associated training program from the database
         Long trainingProgramIDLong = getIntent().getLongExtra("training_program_id", 0);
         trainingProgramID = Integer.valueOf(trainingProgramIDLong.intValue());

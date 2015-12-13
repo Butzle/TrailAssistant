@@ -15,8 +15,8 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Total Remaining Distance To Define: "
-        android:id="@+id/remainingDistance"
+        android:text="Total Remaining Distance In Meter To Define: "
+        android:id="@+id/total_remaining_distance"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
@@ -27,7 +27,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Exercise: "
-        android:layout_below="@+id/remainingDistance"
+        android:layout_below="@+id/total_remaining_distance"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:id="@+id/textView"
@@ -40,13 +40,13 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:spinnerMode="dropdown"
-        android:layout_below="@+id/remainingDistance"
+        android:layout_below="@+id/total_remaining_distance"
         android:layout_toEndOf="@+id/finishButton" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Distance:"
+        android:text="Distance (in meter):"
         android:id="@+id/distanceTextView"
         android:textSize="16dp"
         android:gravity="center"
@@ -70,7 +70,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Duration:"
+        android:text="Duration (in seconds):"
         android:id="@+id/durationTextView"
         android:textSize="16dp"
         android:gravity="center"
