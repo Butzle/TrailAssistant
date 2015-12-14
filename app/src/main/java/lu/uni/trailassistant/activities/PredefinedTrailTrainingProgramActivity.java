@@ -34,6 +34,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
 
 import lu.uni.trailassistant.R;
@@ -47,7 +48,8 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity {
     private Thread nextLocation;
     private Location startLocation;
     private MarkerOptions startMarker;
-    private MarkerOptions currentPosition;//
+    private MarkerOptions currentPosition;
+    private List<LatLng> predefinedPathPoints;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +57,8 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity {
 
         isMockEnabled = false;
         isInForeground = true;
+
+        predefinedPathPoints = new ArrayList<LatLng>();
 
         // retrieve selected ID from Intent
         Intent intent = getIntent();
@@ -77,22 +81,14 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity {
         while (gpsCoordsIterator.hasNext()) {
             GPSCoord currentGPSCoord = gpsCoordsIterator.next();
             LatLng latLng = new LatLng(currentGPSCoord.getLattitude(), currentGPSCoord.getLongitude());
-            waypoints.add(latLng);
-
-            /*Context context = getApplicationContext();
-            int duration = Toast.LENGTH_SHORT;
-
-            Toast toast = Toast.makeText(context, Double.toString(currentGPSCoord.getLattitude()), duration);
-            toast.show();
-            toast = Toast.makeText(context, Double.toString(currentGPSCoord.getLongitude()), duration);
-            toast.show();*/
+            predefinedPathPoints.add(latLng);
 
         }
         drawPredefinedPath = true;
         Routing routing = new Routing.Builder()
                 .travelMode(Routing.TravelMode.WALKING)
                 .withListener(this)
-                .waypoints(waypoints)
+                .waypoints( predefinedPathPoints)
                 .build();
 
         // call onRoutingSuccess
@@ -107,15 +103,15 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity {
         if (((getApplication().getApplicationInfo().flags &
                 ApplicationInfo.FLAG_DEBUGGABLE) != 0) && isMockEnabled) {
             if (mock == null) {
-                mock = new MockLocationProvider("Map", this);
+                mock = new MockLocationProvider("Predefined_Map", this);
             }
-            mock.pushLocation(waypoints.get(0).latitude, waypoints.get(0).longitude);
+           // mock.pushLocation( predefinedPathPoints.get(0).latitude,  predefinedPathPoints.get(0).longitude);
             LocationManager locMgr = (LocationManager)
                     getSystemService(LOCATION_SERVICE);
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return;
             }
-            locMgr.requestLocationUpdates("Map", 0, 50, this);
+            locMgr.requestLocationUpdates("Predefined_Map", 0, 50, this);
 
             Context context = getApplicationContext();
             CharSequence text = "Mock!";
@@ -125,12 +121,13 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity {
             toast.show();
 
             // TODO : need to change this part: need to consider exercises + bugs in it
-            /*nextLocation = new Thread(new Runnable() {
+            nextLocation = new Thread(new Runnable() {
                 public void run() {
-                    Iterator<LatLng> waypointsIterator = waypoints.iterator();
-                    while (isInForeground && waypointsIterator.hasNext()) {
-
-                        mock.pushLocation(waypointsIterator.next().latitude, waypointsIterator.next().longitude);
+                    Iterator<LatLng>  predefinedPathPointsIterator =  predefinedPathPoints.iterator();
+                    LatLng nextPoint;
+                    while (isInForeground && predefinedPathPointsIterator.hasNext()) {
+                        nextPoint = predefinedPathPointsIterator.next();
+                        mock.pushLocation(nextPoint.latitude, nextPoint.longitude);
 
                         try {
                             // ask every 20 seconds a new location
@@ -142,18 +139,25 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity {
                     }
                 }
             });
-            nextLocation.start();*/
+            nextLocation.start();
 
         } else {        // mock locations or debuggable mode not enabled
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return;
             }
-            service.requestLocationUpdates(provider, 300000, 0, this);
+            service.requestLocationUpdates(provider, 60000, 0, this);
         }
     }
 
     @Override
     public void onLocationChanged(Location location) {
+
+        Context context = getApplicationContext();
+        CharSequence text = "Location Changed!";
+        int duration = Toast.LENGTH_SHORT;
+
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
         // TODO consider exercises here as well
         // redraw the markers when get location update.
         // drawMarker(location);

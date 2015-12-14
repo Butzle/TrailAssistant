@@ -114,7 +114,7 @@ public abstract class TrailActivity extends AbstractRouteActivity {
 
         // test if debuggable mode and mock location are disabled
         if (!(((getApplication().getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0) && isMockEnabled)){
-            service.requestLocationUpdates(provider, 300000, 0, this);
+            service.requestLocationUpdates(provider, 60000, 0, this);
         }
     }
 

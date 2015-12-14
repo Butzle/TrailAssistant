@@ -110,12 +110,13 @@ public abstract class AbstractRouteActivity extends FragmentActivity implements 
             // add polylines to the map and the array
             PolylineOptions polyOptions = new PolylineOptions();
             if(drawPredefinedPath){
-                polyOptions.color(Color.BLUE);
+                polyOptions.color(Color.CYAN);
+                polyOptions.width(10);
                 drawPredefinedPath = false;
             }else {
-                polyOptions.color(R.color.colorPrimary);
+                polyOptions.color(Color.BLACK);
+                polyOptions.width(13);
             }
-            polyOptions.width(13);
             polyOptions.addAll(path.getPoints());
             Polyline polyline = map.addPolyline(polyOptions);
             polylines.add(polyline);
@@ -130,7 +131,7 @@ public abstract class AbstractRouteActivity extends FragmentActivity implements 
     public void onRoutingSuccess(PolylineOptions mPolyOptions)
     {
         PolylineOptions polyoptions = new PolylineOptions();
-        polyoptions.color(Color.BLUE);
+        polyoptions.color(Color.CYAN);
         polyoptions.width(10);
         polyoptions.addAll(mPolyOptions.getPoints());
         map.addPolyline(polyoptions);

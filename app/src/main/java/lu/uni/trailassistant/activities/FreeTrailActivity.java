@@ -174,7 +174,7 @@ public class FreeTrailActivity extends TrailActivity {
                         Random r = new Random();
                         mock.pushLocation(lat, lon);
                         // calculate random next location
-                        lat += 0.001;
+                        lat += 0.0025;
                         lon += 0.001 + (0.002 - 0.001) * r.nextDouble();
 
                         try {
@@ -190,7 +190,7 @@ public class FreeTrailActivity extends TrailActivity {
             nextLocation.start();
 
         } else {        // mock locations or debuggable mode not enabled
-            service.requestLocationUpdates(provider, 300000, 0, this);
+            service.requestLocationUpdates(provider, 60000, 0, this);
         }
     }
 

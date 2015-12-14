@@ -20,7 +20,7 @@
         android:id="@+id/start_training_program_button"
         android:enabled="false"
         android:onClick="onClickStartTrainingProgram"
-        android:background="#7678fa"
+        android:background="@android:color/holo_blue_light"
         android:layout_marginBottom="38dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true" />
@@ -46,5 +46,5 @@
         android:layout_alignEnd="@+id/trainingProgramsListView"
         android:enabled="false"
         android:onClick="onClickEditProgramButton"
-        android:background="#7678fa" />
+        android:background="@android:color/holo_blue_light" />
 </RelativeLayout>

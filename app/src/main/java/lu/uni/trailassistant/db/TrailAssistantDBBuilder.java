@@ -13,7 +13,7 @@ import android.util.Log;
 public class TrailAssistantDBBuilder extends SQLiteOpenHelper {
     // Database information
     private static final String DB_NAME = "trailassistant";
-    private static final int DB_VERSION = 10;
+    private static final int DB_VERSION = 11;
 
     // RunningExercise table
     private static final String DB_RUNNING_EXERCISE_TABLE_NAME = "RunningExercise";
