@@ -16,28 +16,14 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Define A New Training Program For Shortest Path"
-        android:id="@+id/newTrainingProgram"
-        android:onClick="newTrainingProgram"
-        android:background="#7678fa"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="44dp"
-        android:layout_alignEnd="@+id/edit_program_button"
-        android:layout_marginTop="1dp" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:text="Start Training Program"
         android:id="@+id/start_training_program_button"
         android:enabled="false"
         android:onClick="onClickStartTrainingProgram"
-        android:layout_above="@+id/newTrainingProgram"
-        android:layout_alignParentStart="true"
         android:background="#7678fa"
-        android:layout_marginTop="2dp"
-        android:layout_marginBottom="1dp" />
+        android:layout_marginBottom="38dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true" />
 
     <ListView
         android:layout_width="wrap_content"
@@ -45,10 +31,10 @@
         android:id="@+id/trainingProgramsListView"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_above="@+id/start_training_program_button"
         android:background="#b3cff8"
         android:layout_alignParentTop="true"
-        android:layout_marginBottom="2dp" />
+        android:layout_above="@+id/start_training_program_button"
+        android:layout_marginBottom="10dp" />
 
     <Button
         android:layout_width="wrap_content"

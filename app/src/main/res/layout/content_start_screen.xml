@@ -38,4 +38,15 @@
         android:layout_alignParentEnd="true"
         android:onClick="freeTrail"
         android:background="#7678fa" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Define A New Training Program For Shortest Path"
+        android:id="@+id/button2"
+        android:onClick="newTrainingProgram"
+        android:background="#7678fa"
+        android:layout_marginTop="60dp"
+        android:layout_below="@+id/free_trail"
+        android:layout_alignParentEnd="true" />
 </RelativeLayout>
