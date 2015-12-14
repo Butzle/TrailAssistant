@@ -3,7 +3,6 @@ package lu.uni.trailassistant.activities;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,20 +11,14 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.directions.route.Routing;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -46,11 +39,9 @@ public class FreeTrailActivity extends TrailActivity {
     private Location startLocation;
     private MarkerOptions startMarker;
     private MarkerOptions currentPosition;
-    private MockLocationProvider mock;
     private double lat;
     private double lon;
     private Thread nextLocation;
-    private boolean isInForeground;
     private double totalDistanceInMeter;
 
 
@@ -59,36 +50,13 @@ public class FreeTrailActivity extends TrailActivity {
         super.onCreate(savedInstanceState);
         startLocation = null;
         currentPosition = null;
-        mock = null;
         isMockEnabled = false;
 
         isInForeground = true;
         lat = 49.600896;
         lon = 6.154168;
 
-
         totalDistanceInMeter = 0;
-
-        // Getting Google Play availability status
-        int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getBaseContext());
-
-        // Showing status
-        if (status != ConnectionResult.SUCCESS) { // Google Play Services are not available
-
-            int requestCode = 10;
-            Dialog dialog = GooglePlayServicesUtil.getErrorDialog(status, this, requestCode);
-            dialog.show();
-
-        } else {
-
-            // setup the map fragment widget
-            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                    .findFragmentById(R.id.map);
-
-            // fetch the map async.
-            mapFragment.getMapAsync(this);
-        }
-
     }
 
 
@@ -222,7 +190,7 @@ public class FreeTrailActivity extends TrailActivity {
             nextLocation.start();
 
         } else {        // mock locations or debuggable mode not enabled
-            service.requestLocationUpdates(provider, 2000, 0, this);
+            service.requestLocationUpdates(provider, 300000, 0, this);
         }
     }
 
@@ -251,37 +219,10 @@ public class FreeTrailActivity extends TrailActivity {
     }
 
 
-    /*private void drawMarker(Location location) {
-        // Remove any existing markers on the map
-        LatLng currentPosition = new LatLng(location.getLatitude(), location.getLongitude());
-        map.addMarker(new MarkerOptions().position(currentPosition).title("ME"));
-
-        CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude()));
-        map.moveCamera(center);
-    }*/
-
-
     public Location getStartLocation() {
         return startLocation;
     }
 
-    // trace the route of the user
-    protected void traceRoute() {
-
-        // initialize an async. request using the direction api
-        if (waypoints.size() >= 2) {
-            LatLng fromIntermediatePoint = waypoints.get(waypoints.size() - 2);
-            LatLng toIntermediatePoint = waypoints.get(waypoints.size() - 1);
-            Routing routing = new Routing.Builder()
-                    .travelMode(Routing.TravelMode.WALKING)
-                    .withListener(this)
-                    .waypoints(fromIntermediatePoint, toIntermediatePoint)
-                    .build();
-
-            // launch the request
-            routing.execute();
-        }
-    }
 
     @Override
     protected void onDestroy() {

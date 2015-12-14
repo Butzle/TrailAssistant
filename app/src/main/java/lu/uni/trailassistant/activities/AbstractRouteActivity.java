@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.directions.route.BuildConfig;
 import com.directions.route.Route;
@@ -50,9 +51,13 @@ public abstract class AbstractRouteActivity extends FragmentActivity implements 
     protected String provider;
     protected List<LatLng> waypoints;
 
+    // used to define in which color to draw the path
+    protected boolean drawPredefinedPath;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        drawPredefinedPath = false;
         map = null;
         service = null;
         waypoints = new ArrayList<LatLng>();
@@ -97,12 +102,19 @@ public abstract class AbstractRouteActivity extends FragmentActivity implements 
 
     @Override
     public void onRoutingSuccess(ArrayList<Route> route, int shortestRouteIndex) {
+
+
         // select the shortest path
         if(!route.isEmpty()) {
             Route path = route.get(shortestRouteIndex);
             // add polylines to the map and the array
             PolylineOptions polyOptions = new PolylineOptions();
-            polyOptions.color(R.color.colorPrimary);
+            if(drawPredefinedPath){
+                polyOptions.color(Color.BLUE);
+                drawPredefinedPath = false;
+            }else {
+                polyOptions.color(R.color.colorPrimary);
+            }
             polyOptions.width(13);
             polyOptions.addAll(path.getPoints());
             Polyline polyline = map.addPolyline(polyOptions);

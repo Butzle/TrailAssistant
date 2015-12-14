@@ -2,6 +2,7 @@ package lu.uni.trailassistant.activities;
 
 import android.Manifest;
 import android.app.AppOpsManager;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -17,12 +18,17 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.directions.route.BuildConfig;
+import com.directions.route.Routing;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 
 import lu.uni.trailassistant.R;
+import lu.uni.trailassistant.mock.MockLocationProvider;
 
 /**
  * Created by Jo on 12/12/15.
@@ -34,6 +40,7 @@ public abstract class TrailActivity extends AbstractRouteActivity {
     private Button startAndPauseButton;
     protected boolean isInForeground;
     protected boolean isMockEnabled;
+    protected MockLocationProvider mock;
 
     protected Handler timerHandler = new Handler();
 
@@ -64,6 +71,8 @@ public abstract class TrailActivity extends AbstractRouteActivity {
 
         isMockEnabled = isMockLocationEnabled();
 
+        mock = null;
+
 
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
@@ -71,6 +80,26 @@ public abstract class TrailActivity extends AbstractRouteActivity {
 
         }else{
             showGPSDisabledAlertToUser();
+        }
+
+        // Getting Google Play availability status
+        int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getBaseContext());
+
+        // Showing status
+        if (status != ConnectionResult.SUCCESS) { // Google Play Services are not available
+
+            int requestCode = 10;
+            Dialog dialog = GooglePlayServicesUtil.getErrorDialog(status, this, requestCode);
+            dialog.show();
+
+        } else {
+
+            // setup the map fragment widget
+            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                    .findFragmentById(R.id.map);
+
+            // fetch the map async.
+            mapFragment.getMapAsync(this);
         }
 
     }
@@ -85,7 +114,7 @@ public abstract class TrailActivity extends AbstractRouteActivity {
 
         // test if debuggable mode and mock location are disabled
         if (!(((getApplication().getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0) && isMockEnabled)){
-            service.requestLocationUpdates(provider, 2000, 0, this);
+            service.requestLocationUpdates(provider, 300000, 0, this);
         }
     }
 
@@ -129,6 +158,24 @@ public abstract class TrailActivity extends AbstractRouteActivity {
         }
 
         return isMockLocation;
+    }
+
+    // trace the route of the user
+    protected void traceRoute() {
+
+        // initialize an async. request using the direction api
+        if (waypoints.size() >= 2) {
+            LatLng fromIntermediatePoint = waypoints.get(waypoints.size() - 2);
+            LatLng toIntermediatePoint = waypoints.get(waypoints.size() - 1);
+            Routing routing = new Routing.Builder()
+                    .travelMode(Routing.TravelMode.WALKING)
+                    .withListener(this)
+                    .waypoints(fromIntermediatePoint, toIntermediatePoint)
+                    .build();
+
+            // launch the request
+            routing.execute();
+        }
     }
 
     public abstract void onFinishedExercise(View view);
