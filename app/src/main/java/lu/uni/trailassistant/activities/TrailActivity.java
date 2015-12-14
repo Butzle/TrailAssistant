@@ -4,10 +4,9 @@ import android.Manifest;
 import android.app.AppOpsManager;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.location.Criteria;
-import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,7 +17,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.directions.route.BuildConfig;
-import com.directions.route.Routing;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.GoogleMap;
@@ -41,6 +39,7 @@ public abstract class TrailActivity extends AbstractRouteActivity {
     protected boolean isInForeground;
     protected boolean isMockEnabled;
     protected MockLocationProvider mock;
+    protected double totalDistanceInMeter;
 
     protected Handler timerHandler = new Handler();
 
@@ -114,7 +113,7 @@ public abstract class TrailActivity extends AbstractRouteActivity {
 
         // test if debuggable mode and mock location are disabled
         if (!(((getApplication().getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0) && isMockEnabled)){
-            service.requestLocationUpdates(provider, 60000, 0, this);
+            service.requestLocationUpdates(provider, 30000, 0, this);
         }
     }
 
@@ -132,6 +131,27 @@ public abstract class TrailActivity extends AbstractRouteActivity {
             timerHandler.postDelayed(timerRunnable, 0);
             startAndPauseButton.setText("Reset");
         }
+    }
+
+    public void saveRoute() {
+        Intent intent = new Intent(this, NewTrainingProgramActivity.class);
+        ArrayList<Double> latitudes = new ArrayList<Double>();
+        ArrayList<Double> longitudes = new ArrayList<Double>();
+        for(LatLng point: waypoints){
+            latitudes.add(point.latitude);
+            longitudes.add(point.longitude);
+        }
+        intent.putExtra("latitudesArrayList", latitudes);
+        intent.putExtra("longitudesArrayList", longitudes);
+        intent.putExtra("totalDistanceInMeter", totalDistanceInMeter);
+        reset();
+        startActivity(intent);
+    }
+
+    public void finished() {
+        Intent intent = new Intent(this, StartScreenActivity.class);
+        reset();
+        startActivity(intent);
     }
 
     // http://stackoverflow.com/questions/33003553/how-to-read-selected-mock-location-app-in-android-m-api-23/33066797#33066797
@@ -160,23 +180,7 @@ public abstract class TrailActivity extends AbstractRouteActivity {
         return isMockLocation;
     }
 
-    // trace the route of the user
-    protected void traceRoute() {
-
-        // initialize an async. request using the direction api
-        if (waypoints.size() >= 2) {
-            LatLng fromIntermediatePoint = waypoints.get(waypoints.size() - 2);
-            LatLng toIntermediatePoint = waypoints.get(waypoints.size() - 1);
-            Routing routing = new Routing.Builder()
-                    .travelMode(Routing.TravelMode.WALKING)
-                    .withListener(this)
-                    .waypoints(fromIntermediatePoint, toIntermediatePoint)
-                    .build();
-
-            // launch the request
-            routing.execute();
-        }
-    }
-
     public abstract void onFinishedExercise(View view);
+
+    public abstract void reset();
 }

@@ -1,26 +1,17 @@
 package lu.uni.trailassistant.activities;
 
-import android.Manifest;
 import android.app.AlertDialog;
-import android.app.AppOpsManager;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.directions.route.BuildConfig;
 import com.directions.route.Route;
 import com.directions.route.RoutingListener;
 import com.google.android.gms.maps.GoogleMap;
@@ -32,7 +23,6 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import java.util.ArrayList;
 import java.util.List;
 
-import lu.uni.trailassistant.R;
 
 /**
  * Created by Jo on 26/11/15.
@@ -102,8 +92,6 @@ public abstract class AbstractRouteActivity extends FragmentActivity implements 
 
     @Override
     public void onRoutingSuccess(ArrayList<Route> route, int shortestRouteIndex) {
-
-
         // select the shortest path
         if(!route.isEmpty()) {
             Route path = route.get(shortestRouteIndex);
@@ -112,7 +100,6 @@ public abstract class AbstractRouteActivity extends FragmentActivity implements 
             if(drawPredefinedPath){
                 polyOptions.color(Color.CYAN);
                 polyOptions.width(10);
-                drawPredefinedPath = false;
             }else {
                 polyOptions.color(Color.BLACK);
                 polyOptions.width(13);
