@@ -47,6 +47,7 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity {
     private ListIterator<Exercise> exerciseListIterator;
     private Exercise currentExercise;
     private Thread exerciseStack;
+    private boolean isPerformingGymExercise;
 
     // needed to calculate the distance to compare with the running exercise distance
     private LatLng lastCheckpoint;
@@ -61,6 +62,9 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity {
 
         isMockEnabled = false;
         isInForeground = true;
+        isPerformingGymExercise = false;
+
+        currentExercise = null;
 
         predefinedPathPoints = new ArrayList<LatLng>();
 
@@ -110,8 +114,7 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity {
         if(lastCheckpoint == null) {
             lastCheckpoint = predefinedPathPoints.get(0);
             currentLocation = lastCheckpoint;
-            currentExercise = exerciseListIterator.next();
-            //executeExerciseStack();
+            executeExerciseStack();
         }
 
         isMockEnabled = isMockLocationEnabled();
@@ -135,20 +138,21 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity {
             Toast toast = Toast.makeText(context, text, duration);
             toast.show();
 
-            // TODO : need to change this part: need to consider exercises
             nextLocation = new Thread(new Runnable() {
                 public void run() {
                     Iterator<LatLng> predefinedPathPointsIterator = predefinedPathPoints.iterator();
                     LatLng nextPoint;
                     while (isInForeground && predefinedPathPointsIterator.hasNext()) {
-                        nextPoint = predefinedPathPointsIterator.next();
-                        mock.pushLocation(nextPoint.latitude, nextPoint.longitude);
+                        if (!isPerformingGymExercise) {
+                            nextPoint = predefinedPathPointsIterator.next();
+                            mock.pushLocation(nextPoint.latitude, nextPoint.longitude);
 
-                        try {
-                            // ask every 10 seconds for a new location
-                            Thread.sleep(10000);
-                        } catch (InterruptedException e) {
-                            break;
+                            try {
+                                // ask every 10 seconds for a new location
+                                Thread.sleep(10000);
+                            } catch (InterruptedException e) {
+                                break;
+                            }
                         }
 
                     }
@@ -160,52 +164,62 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return;
             }
-            service.requestLocationUpdates(provider, 30000, 0, this);
+            service.requestLocationUpdates(provider, 10000, 0, this);
         }
     }
 
-    private void removeUpdates() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        service.removeUpdates(this);
-    }
-
-    private void addUpdates() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-            return;
-        }
-        service.requestLocationUpdates(provider, 30000, 0, this);
-    }
 
     public void executeExerciseStack() {
         exerciseStack = new Thread(new Runnable() {
             // indicates if the end of an exercise has been reached
             public void run() {
-                while (isInForeground && exerciseListIterator.hasNext()) {
+                // to check if the user run more than the distance of the running exercise
+                float differenceFromLastRunnungExercise = 0;
+                while (isInForeground) {
+                    if (currentExercise == null && exerciseListIterator.hasNext()){
+                        currentExercise = exerciseListIterator.next();
+                    }
                     float distanceOfRunningExercise = 0, currentDistanceToLastCheckPoint = 0;
                     if (currentExercise instanceof RunningExercise) {
+                        isPerformingGymExercise = false;
+                        Log.i(TAG, "Running Exercise");
                         RunningExercise runningExercise = (RunningExercise) currentExercise;
-                        distanceOfRunningExercise = runningExercise.getDistance();
+
+                        distanceOfRunningExercise = runningExercise.getDistance() - differenceFromLastRunnungExercise;
+
+                        Log.i(TAG, Double.toString(distanceOfRunningExercise));
+
                         currentDistanceToLastCheckPoint = getDistanceBetweenTwoPoints(lastCheckpoint, currentLocation);
-                        // we reached the next operation from the stack
+
                         if (distanceOfRunningExercise - currentDistanceToLastCheckPoint <= 0) {
+                            differenceFromLastRunnungExercise = currentDistanceToLastCheckPoint - distanceOfRunningExercise;
                             Log.i(TAG, "Running Exercise Terminated");
-                            currentExercise = exerciseListIterator.next();
+                            if(exerciseListIterator.hasNext()) {
+                                currentExercise = exerciseListIterator.next();
+                                lastCheckpoint = currentLocation;
+                                continue;
+                            }
                         }
 
                     } else if (currentExercise instanceof GymExercise) {
+                        isPerformingGymExercise = true;
                         GymExercise gymExercise = (GymExercise) currentExercise;
                         int duration = gymExercise.getDuration();
                         Log.i(TAG, gymExercise.toString());
-                        removeUpdates();
                         try {
                             Thread.sleep(duration * 1000);
                         } catch (InterruptedException e) {
                             break;
                         }
-                        addUpdates();
+                        if (exerciseListIterator.hasNext()) {
+                            currentExercise = exerciseListIterator.next();
+                            continue;
+                        }
+
+                    }
+                    if (!exerciseListIterator.hasNext()){
+                        Log.i(TAG, "Training Program Terminated!");
+                        break;
                     }
                     try {
                         Thread.sleep(3000);
@@ -218,51 +232,6 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity {
         exerciseStack.start();
     }
 
-    /*
-     exerciseStack = new Thread() {
-            // indicates if the end of an exercise has been reached
-            public void run() {
-                Looper.prepare();
-                final Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    public void run() {
-                        while (isInForeground && exerciseListIterator.hasNext()) {
-                            float distanceOfRunningExercise = 0, currentDistanceToLastCheckPoint = 0;
-                            if (currentExercise instanceof RunningExercise) {
-                                RunningExercise runningExercise = (RunningExercise) currentExercise;
-                                distanceOfRunningExercise = runningExercise.getDistance();
-                                currentDistanceToLastCheckPoint = getDistanceBetweenTwoPoints(lastCheckpoint, currentLocation);
-                                // we reached the next operation from the stack
-                                if (distanceOfRunningExercise - currentDistanceToLastCheckPoint <= 0) {
-                                    Log.i(TAG, "Running Exercise Terminated");
-                                    currentExercise = exerciseListIterator.next();
-                                }
-
-                            } else if (currentExercise instanceof GymExercise) {
-                                GymExercise gymExercise = (GymExercise) currentExercise;
-                                int duration = gymExercise.getDuration();
-                                Log.i(TAG, gymExercise.toString());
-                                //removeUpdates();
-                                try {
-                                    Thread.sleep(duration * 1000);
-                                } catch (InterruptedException e) {
-                                    break;
-                                }
-                                //addUpdates();
-                            }
-                            try {
-                                Thread.sleep(3000);
-                            } catch (InterruptedException e) {
-                                break;
-                            }
-                        }
-                    }
-                }, 2000);
-                Looper.loop();
-            }
-        };
-        exerciseStack.start();
-     */
 
     @Override
     public void onLocationChanged(Location location) {
