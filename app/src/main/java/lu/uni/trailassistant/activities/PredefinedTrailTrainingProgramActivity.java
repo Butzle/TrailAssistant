@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.View;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Locale;
 
 import lu.uni.trailassistant.R;
 import lu.uni.trailassistant.db.DBConnector;
@@ -37,7 +39,10 @@ import lu.uni.trailassistant.objects.GymExercise;
 import lu.uni.trailassistant.objects.RunningExercise;
 import lu.uni.trailassistant.objects.TrainingProgram;
 
-public class PredefinedTrailTrainingProgramActivity extends TrailActivity {
+// copied the class from: http://www.androidhive.info/2012/01/android-text-to-speech-tutorial/
+// enabling text-to-speech required for receiving instructions: http://www.greenbot.com/article/2105862/how-to-get-started-with-google-text-to-speech.html
+
+public class PredefinedTrailTrainingProgramActivity extends TrailActivity implements TextToSpeech.OnInitListener {
     private TrainingProgram trainingProgram;
     private Thread nextLocation;
     private Location startLocation;
@@ -48,6 +53,10 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity {
     private Exercise currentExercise;
     private Thread exerciseStack;
     private boolean isPerformingGymExercise;
+
+    private TextToSpeech tts;
+    private boolean isTextToSpeechSuccess;
+    private boolean isNewExercise;
 
     // needed to calculate the distance to compare with the running exercise distance
     private LatLng lastCheckpoint;
@@ -64,7 +73,13 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity {
         isInForeground = true;
         isPerformingGymExercise = false;
 
+
+        isTextToSpeechSuccess = false;
+        isNewExercise = true;
+        tts = new TextToSpeech(this, this);
+
         currentExercise = null;
+
 
         predefinedPathPoints = new ArrayList<LatLng>();
 
@@ -83,13 +98,6 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity {
 
         exerciseListIterator = trainingProgram.getExercisesAsListIterator();
 
-       /* for (Exercise exercise: trainingProgram.getExercises()){
-            Context context = getApplicationContext();
-            int duration = Toast.LENGTH_SHORT;
-
-            Toast toast = Toast.makeText(context, exercise.toString(), duration);
-            toast.show();
-        } */
     }
 
     @Override
@@ -181,9 +189,15 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity {
                     }
                     float distanceOfRunningExercise = 0, currentDistanceToLastCheckPoint = 0;
                     if (currentExercise instanceof RunningExercise) {
+
+
                         isPerformingGymExercise = false;
-                        Log.i(TAG, "Running Exercise");
                         RunningExercise runningExercise = (RunningExercise) currentExercise;
+
+                        if(isNewExercise && isTextToSpeechSuccess){
+                            speak(runningExercise.toString());
+                            isNewExercise = false;
+                        }
 
                         distanceOfRunningExercise = runningExercise.getDistance() - differenceFromLastRunnungExercise;
 
@@ -197,6 +211,7 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity {
                             if(exerciseListIterator.hasNext()) {
                                 currentExercise = exerciseListIterator.next();
                                 lastCheckpoint = currentLocation;
+                                isNewExercise = true;
                                 continue;
                             }
                         }
@@ -204,6 +219,10 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity {
                     } else if (currentExercise instanceof GymExercise) {
                         isPerformingGymExercise = true;
                         GymExercise gymExercise = (GymExercise) currentExercise;
+
+                        if(isNewExercise && isTextToSpeechSuccess){
+                            speak(gymExercise.toString());
+                        }
                         int duration = gymExercise.getDuration();
                         Log.i(TAG, gymExercise.toString());
                         try {
@@ -218,6 +237,9 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity {
 
                     }
                     if (!exerciseListIterator.hasNext()){
+                        if(isTextToSpeechSuccess){
+                            speak("Training Program Terminated");
+                        }
                         Log.i(TAG, "Training Program Terminated!");
                         break;
                     }
@@ -320,6 +342,34 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity {
         }
     }
 
+    @Override
+    public void onInit(int status) {
+
+        if (status == TextToSpeech.SUCCESS) {
+
+            int result = tts.setLanguage(Locale.US);
+
+            if (result == TextToSpeech.LANG_MISSING_DATA
+                    || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                Log.e("TTS", "This Language is not supported");
+            } else {
+                isTextToSpeechSuccess = true;
+            }
+
+        } else {
+            Log.e("TTS", "Initilization Failed!");
+        }
+
+    }
+
+    private void speak(String text) {
+
+        // the not deprecated method requires API lvl 21
+        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+
+    }
+
+
     public void reset() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
@@ -329,6 +379,11 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity {
         service.removeUpdates(this);
         predefinedPathPoints = new ArrayList<LatLng>();
         drawPredefinedPath = true;
+
+        if (tts != null) {
+            tts.stop();
+            tts.shutdown();
+        }
     }
 
 
