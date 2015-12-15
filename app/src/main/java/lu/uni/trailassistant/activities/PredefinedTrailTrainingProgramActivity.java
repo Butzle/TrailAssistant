@@ -57,6 +57,7 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity implem
     private TextToSpeech tts;
     private boolean isTextToSpeechSuccess;
     private boolean isNewExercise;
+    private boolean isSpeakInitialized;
 
     // needed to calculate the distance to compare with the running exercise distance
     private LatLng lastCheckpoint;
@@ -69,6 +70,7 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity implem
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
         isMockEnabled = false;
         isInForeground = true;
         isPerformingGymExercise = false;
@@ -77,6 +79,8 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity implem
         isTextToSpeechSuccess = false;
         isNewExercise = true;
         tts = new TextToSpeech(this, this);
+        isSpeakInitialized = false;
+
 
         currentExercise = null;
 
@@ -181,6 +185,14 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity implem
         exerciseStack = new Thread(new Runnable() {
             // indicates if the end of an exercise has been reached
             public void run() {
+                // wait for onInit(int status) to get called
+                while(!isSpeakInitialized){
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        break;
+                    }
+                }
                 // to check if the user run more than the distance of the running exercise
                 float differenceFromLastRunnungExercise = 0;
                 while (isInForeground) {
@@ -204,8 +216,9 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity implem
                         Log.i(TAG, Double.toString(distanceOfRunningExercise));
 
                         currentDistanceToLastCheckPoint = getDistanceBetweenTwoPoints(lastCheckpoint, currentLocation);
-
-                        if (distanceOfRunningExercise - currentDistanceToLastCheckPoint <= 0) {
+                        Log.i(TAG, "current distance = "+Double.toString(currentDistanceToLastCheckPoint));
+                        // double precision problems, therefore <= 1 and not <= 0
+                        if (distanceOfRunningExercise - currentDistanceToLastCheckPoint <= 1) {
                             differenceFromLastRunnungExercise = currentDistanceToLastCheckPoint - distanceOfRunningExercise;
                             Log.i(TAG, "Running Exercise Terminated");
                             if(exerciseListIterator.hasNext()) {
@@ -220,7 +233,7 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity implem
                         isPerformingGymExercise = true;
                         GymExercise gymExercise = (GymExercise) currentExercise;
 
-                        if(isNewExercise && isTextToSpeechSuccess){
+                        if(isTextToSpeechSuccess){
                             speak(gymExercise.toString());
                         }
                         int duration = gymExercise.getDuration();
@@ -232,6 +245,8 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity implem
                         }
                         if (exerciseListIterator.hasNext()) {
                             currentExercise = exerciseListIterator.next();
+                            Log.i(TAG, "has Next");
+                            isNewExercise = true;
                             continue;
                         }
 
@@ -345,20 +360,22 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity implem
     @Override
     public void onInit(int status) {
 
+        Log.v(TAG, "onInit");
+
         if (status == TextToSpeech.SUCCESS) {
 
             int result = tts.setLanguage(Locale.US);
 
             if (result == TextToSpeech.LANG_MISSING_DATA
                     || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                Log.e("TTS", "This Language is not supported");
             } else {
                 isTextToSpeechSuccess = true;
             }
 
         } else {
-            Log.e("TTS", "Initilization Failed!");
+            Log.v(TAG,"TTS Initilization Failed!");
         }
+        isSpeakInitialized = true;
 
     }
 
