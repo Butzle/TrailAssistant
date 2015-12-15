@@ -38,6 +38,7 @@ public class AddExerciseActivity extends AppCompatActivity {
     private Button addButton, finishButton;
     private int  totalRemainingDistanceInMeter;
     private String totalRemainingDistanceToDefine;
+    private int requestCode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +79,10 @@ public class AddExerciseActivity extends AppCompatActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
         spinnerExerciseMode.setAdapter(adapter);
+
+        // determine request code from intent (are we modifying an exercise or adding new ones?)
+        //requestCode = getIntent().getIntExtra("request_code",0);
+        //if(getIntent().)
 
         // initialize the linked list that will contain the new exercises
         exercisesToBeAdded = new HashMap<Integer, Exercise>();

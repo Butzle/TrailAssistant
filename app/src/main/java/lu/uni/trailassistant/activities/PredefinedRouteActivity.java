@@ -1,15 +1,19 @@
 package lu.uni.trailassistant.activities;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import lu.uni.trailassistant.R;
 import lu.uni.trailassistant.db.DBConnector;
@@ -60,14 +64,7 @@ public class PredefinedRouteActivity extends AppCompatActivity {
                 //showHistoryButton.setEnabled(true);
                 editProgramButton.setEnabled(true);
                 startTrainingProgramButton.setEnabled(true);
-                // reset background color of last selected ListView item (if needed)
-                Drawable defaultBackground = parent.getChildAt(position).getBackground();
-                if(lastSelectedIndex > -1) {
-                    parent.getChildAt(lastSelectedIndex).setBackground(defaultBackground);
-                }
-                // put some background color on the newly selected ListView item and remember it's position
                 lastSelectedIndex = position;
-                parent.getChildAt(position).setBackgroundColor(Color.BLUE);
             }
         });
     }

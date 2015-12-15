@@ -114,12 +114,12 @@ public class TrailAssistantDBBuilder extends SQLiteOpenHelper {
     private void insertDummyData(SQLiteDatabase database) {
         String insertTrainingProgram = "insert into TrainingProgram values (NULL, 'Test Training Program')";
         //String retrieveTrainingProgramID = "select _id from TrainingProgram order by training_program_id desc limit 1";
-        String insertGPSCoords =    "insert into GPSCoord values (NULL, 49.600464, 6.094379, 1, 1), " +
-                                    "(NULL, 49.600309, 6.095712, 2, 1), " +
-                                    "(NULL, 49.605406, 6.097900, 3, 1), " +
-                                    "(NULL, 49.607214, 6.109276, 4, 1), " +
-                                    "(NULL, 49.604339, 6.111636, 5, 1), " +
-                                    "(NULL, 49.606251, 6.112159, 6, 1)";
+        String insertGPSCoords =    "insert into GPSCoord values (NULL, 6.094379, 49.600464, 1, 1), " +
+                                    "(NULL, 6.095712, 49.600309, 2, 1), " +
+                                    "(NULL, 6.097900, 49.605406, 3, 1), " +
+                                    "(NULL, 6.109276, 49.607214, 4, 1), " +
+                                    "(NULL, 6.111636, 49.604339, 5, 1), " +
+                                    "(NULL, 6.112159, 49.606251, 6, 1)";
         String insertRunningExercises =    "insert into RunningExercise values (NULL, 360, 0, 2, 1, 1), " +
                                     "(NULL, 0, 300, 3, 2, 1), " +
                                     "(NULL, 120, 0, 1, 3, 1)";
