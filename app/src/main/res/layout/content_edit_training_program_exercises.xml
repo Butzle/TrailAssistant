@@ -48,7 +48,9 @@
         android:layout_below="@+id/exercisesTextView"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_above="@+id/saveButton" />
+        android:layout_above="@+id/moveUpButton"
+        android:choiceMode="singleChoice"
+        android:listSelector="#ffffCC"/>
 
     <Button
         android:layout_width="wrap_content"
@@ -78,5 +80,36 @@
         android:layout_toStartOf="@+id/trainingProgramNameEditText"
         android:layout_alignEnd="@+id/trainingProgramNameTextView"
         android:textSize="13dp"
-        android:onClick="onClickAddTrainingExerciseButton" />
+        android:onClick="onClickAddTrainingExerciseButton"
+        android:enabled="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Move down"
+        android:textSize="12dp"
+        android:id="@+id/moveDownButton"
+        android:layout_above="@+id/saveButton"
+        android:layout_alignStart="@+id/moveUpButton"
+        android:onClick="onClickMoveDownButton" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Move up"
+        android:textSize="12dp"
+        android:id="@+id/moveUpButton"
+        android:layout_above="@+id/moveDownButton"
+        android:layout_alignEnd="@+id/exercisesListView"
+        android:onClick="onClickMoveUpButton"
+        android:nestedScrollingEnabled="false" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Delete"
+        android:id="@+id/deleteButton"
+        android:layout_below="@+id/exercisesListView"
+        android:layout_alignEnd="@+id/exercisesTextView" />
+
 </RelativeLayout>

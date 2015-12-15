@@ -34,7 +34,9 @@
         android:background="#b3cff8"
         android:layout_alignParentTop="true"
         android:layout_above="@+id/start_training_program_button"
-        android:layout_marginBottom="10dp" />
+        android:layout_marginBottom="10dp"
+        android:choiceMode="singleChoice"
+        android:listSelector="#3f51b5"/>
 
     <Button
         android:layout_width="wrap_content"
