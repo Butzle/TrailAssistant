@@ -26,7 +26,7 @@ public class EditTrainingProgramExercisesActivity extends AppCompatActivity {
     int trainingProgramID;
     TrainingProgram trainingProgram;
     EditText trainingProgramNameEditText;
-    Button addExerciseButton, deleteButton, moveUpButton, moveDownButton;
+    Button addExerciseButton, moveUpButton, moveDownButton;
     ListView exercisesListView;
     ArrayAdapter<Exercise> exerciseAdapter;
     int lastSelectedIndex = -1;
@@ -42,8 +42,6 @@ public class EditTrainingProgramExercisesActivity extends AppCompatActivity {
         // No distance left to define => if button enabled here, need to check if the user always defines exactly the total distance
         addExerciseButton = (Button)findViewById(R.id.add_exercise_button);
         addExerciseButton.setEnabled(false);
-        deleteButton = (Button)findViewById(R.id.deleteButton);
-        deleteButton.setEnabled(false);
         moveUpButton = (Button)findViewById(R.id.moveUpButton);
         moveUpButton.setEnabled(false);
         moveDownButton = (Button)findViewById(R.id.moveDownButton);
@@ -59,6 +57,7 @@ public class EditTrainingProgramExercisesActivity extends AppCompatActivity {
         trainingProgram = dbc.getTrainingProgramFromID(trainingProgramID);
         trainingProgramNameEditText = (EditText) findViewById(R.id.trainingProgramNameEditText);
         trainingProgramNameEditText.setText(trainingProgram.getProgramName());
+        trainingProgramNameEditText.clearFocus();
 
         // populate list view with exercises
         exercisesListView = (ListView) findViewById(R.id.exercisesListView);
@@ -71,7 +70,6 @@ public class EditTrainingProgramExercisesActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if(lastSelectedIndex == -1) {
-                    deleteButton.setEnabled(true);
                     moveUpButton.setEnabled(true);
                     moveDownButton.setEnabled(true);
                 }
@@ -127,7 +125,6 @@ public class EditTrainingProgramExercisesActivity extends AppCompatActivity {
             lastSelectedIndex--;
             exerciseAdapter.notifyDataSetChanged();
             exercisesListView.setSelection(lastSelectedIndex);
-            exercisesListView.getChildAt(lastSelectedIndex).setBackgroundColor(Color.YELLOW);
         }
     }
 
@@ -140,7 +137,6 @@ public class EditTrainingProgramExercisesActivity extends AppCompatActivity {
             lastSelectedIndex++;
             exerciseAdapter.notifyDataSetChanged();
             exercisesListView.setSelection(lastSelectedIndex);
-            exercisesListView.getChildAt(lastSelectedIndex).setBackgroundColor(Color.YELLOW);
         }
     }
 
@@ -149,10 +145,10 @@ public class EditTrainingProgramExercisesActivity extends AppCompatActivity {
         exerciseAdapter.notifyDataSetChanged();
     }
 
-    public void onClickModify(View view) {
+    /*public void onClickModify(View view) {
         Intent intent = new Intent(this, AddExerciseActivity.class);
         intent.putExtra("exercise", exerciseAdapter.getItem(lastSelectedIndex));
         intent.putExtra("request_code", EDIT_EXERCISE);
         startActivityForResult(intent, EDIT_EXERCISE);
-    }
+    }*/
 }
