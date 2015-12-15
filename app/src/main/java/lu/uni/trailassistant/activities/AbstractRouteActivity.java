@@ -35,7 +35,7 @@ import java.util.List;
 public abstract class AbstractRouteActivity extends FragmentActivity implements RoutingListener, LocationListener, OnMapReadyCallback {
 
     protected ArrayList<Polyline> polylines;
-    private static final String TAG = "MapsActivity";
+    private static final String TAG = "AbstractRouteActivity";
     protected GoogleMap map;
     protected LocationManager service;
     protected String provider;

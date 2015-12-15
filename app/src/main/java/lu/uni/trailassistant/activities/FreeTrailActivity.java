@@ -148,7 +148,7 @@ public class FreeTrailActivity extends TrailActivity {
                         lon += 0.001 + (0.002 - 0.001) * r.nextDouble();
 
                         try {
-                            // ask every 10 seconds a new location
+                            // ask every 10 seconds for a new location
                             Thread.sleep(10000);
                         } catch (InterruptedException e) {
                             break;
