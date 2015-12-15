@@ -9,7 +9,6 @@ import android.util.Log;
 import java.util.Iterator;
 import java.util.ListIterator;
 
-import lu.uni.trailassistant.activities.EditTrainingProgramExercisesActivity;
 import lu.uni.trailassistant.objects.GYM_MODE;
 import lu.uni.trailassistant.objects.Exercise;
 import lu.uni.trailassistant.objects.GPSCoord;

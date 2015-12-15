@@ -1,7 +1,6 @@
 package lu.uni.trailassistant.db;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -13,7 +12,7 @@ import android.util.Log;
 public class TrailAssistantDBBuilder extends SQLiteOpenHelper {
     // Database information
     private static final String DB_NAME = "trailassistant";
-    private static final int DB_VERSION = 11;
+    private static final int DB_VERSION = 12;
 
     // RunningExercise table
     private static final String DB_RUNNING_EXERCISE_TABLE_NAME = "RunningExercise";

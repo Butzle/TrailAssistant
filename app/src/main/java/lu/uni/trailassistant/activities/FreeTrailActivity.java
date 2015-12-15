@@ -5,7 +5,6 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -42,7 +41,6 @@ public class FreeTrailActivity extends TrailActivity {
     private double lat;
     private double lon;
     private Thread nextLocation;
-    private double totalDistanceInMeter;
 
 
     @Override
@@ -103,34 +101,6 @@ public class FreeTrailActivity extends TrailActivity {
         timerHandler.removeCallbacks(timerRunnable);
     }
 
-    public void saveRoute() {
-        Intent intent = new Intent(this, NewTrainingProgramActivity.class);
-        ArrayList<Double> latitudes = new ArrayList<Double>();
-        ArrayList<Double> longitudes = new ArrayList<Double>();
-        for(LatLng point: waypoints){
-            latitudes.add(point.latitude);
-            longitudes.add(point.longitude);
-
-           /* Context context = getApplicationContext();
-            int duration = Toast.LENGTH_SHORT;
-
-
-            Toast toast = Toast.makeText(context, Double.toString(point.latitude), duration);
-            toast.show();*/
-        }
-        intent.putExtra("latitudesArrayList", latitudes);
-        intent.putExtra("longitudesArrayList", longitudes);
-        intent.putExtra("totalDistanceInMeter", totalDistanceInMeter);
-        reset();
-        startActivity(intent);
-    }
-
-    public void finished() {
-        Intent intent = new Intent(this, StartScreenActivity.class);
-        reset();
-        startActivity(intent);
-    }
-
 
     public void onMapReady(GoogleMap map) {
         super.onMapReady(map);
@@ -174,12 +144,12 @@ public class FreeTrailActivity extends TrailActivity {
                         Random r = new Random();
                         mock.pushLocation(lat, lon);
                         // calculate random next location
-                        lat += 0.0025;
-                        lon += 0.001 + (0.002 - 0.001) * r.nextDouble();
+                        lat += 0.0008;
+                        lon += 0.0009 + (0.0001 - 0.00005) * r.nextDouble();
 
                         try {
-                            // ask every 20 seconds a new location
-                            Thread.sleep(20000);
+                            // ask every 10 seconds for a new location
+                            Thread.sleep(10000);
                         } catch (InterruptedException e) {
                             break;
                         }
@@ -190,7 +160,7 @@ public class FreeTrailActivity extends TrailActivity {
             nextLocation.start();
 
         } else {        // mock locations or debuggable mode not enabled
-            service.requestLocationUpdates(provider, 60000, 0, this);
+            service.requestLocationUpdates(provider, 10000, 0, this);
         }
     }
 
@@ -239,5 +209,23 @@ public class FreeTrailActivity extends TrailActivity {
         waypoints = new ArrayList<LatLng>();
         service.removeUpdates(this);
         //map.clear();
+    }
+
+    // trace the route of the user
+    protected void traceRoute() {
+
+        // initialize an async. request using the direction api
+        if (waypoints.size() >= 2) {
+            LatLng fromIntermediatePoint = waypoints.get(waypoints.size() - 2);
+            LatLng toIntermediatePoint = waypoints.get(waypoints.size() - 1);
+            Routing routing = new Routing.Builder()
+                    .travelMode(Routing.TravelMode.WALKING)
+                    .withListener(this)
+                    .waypoints(fromIntermediatePoint, toIntermediatePoint)
+                    .build();
+
+            // launch the request
+            routing.execute();
+        }
     }
 }

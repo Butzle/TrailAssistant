@@ -10,7 +10,6 @@ import android.widget.CursorAdapter;
 import android.widget.TextView;
 
 import lu.uni.trailassistant.R;
-import lu.uni.trailassistant.objects.TrainingProgram;
 
 /**
  * Created by leandrogil on 30.11.15.
