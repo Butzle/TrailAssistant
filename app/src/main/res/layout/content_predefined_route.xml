@@ -1,13 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".activities.PredefinedRouteActivity"
     tools:showIn="@layout/activity_predefined_route"
-    tools:context="lu.uni.trailassistant.PredefinedRouteActivity">
+    android:background="#a9a9ad">
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start Training Program"
+        android:id="@+id/start_training_program_button"
+        android:enabled="false"
+        android:onClick="onClickStartTrainingProgram"
+        android:background="@android:color/holo_blue_light"
+        android:layout_marginBottom="38dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true" />
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/trainingProgramsListView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:background="#b3cff8"
+        android:layout_alignParentTop="true"
+        android:layout_above="@+id/start_training_program_button"
+        android:layout_marginBottom="10dp"
+        android:choiceMode="singleChoice"
+        android:listSelector="#3f51b5"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Edit Program"
+        android:id="@+id/edit_program_button"
+        android:layout_below="@+id/trainingProgramsListView"
+        android:layout_alignRight="@+id/trainingProgramsListView"
+        android:layout_alignEnd="@+id/trainingProgramsListView"
+        android:enabled="false"
+        android:onClick="onClickEditProgramButton"
+        android:background="@android:color/holo_blue_light" />
 </RelativeLayout>

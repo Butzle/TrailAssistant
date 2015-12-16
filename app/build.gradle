@@ -1,12 +1,19 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'trailassistantkeystore'
+            keyPassword 'trailassistant'
+            storeFile file('/Users/Jo/Documents/keystore/trailassistant.keystore.jks')
+            storePassword 'trailassistant'
+        }
+    }
     compileSdkVersion 23
     buildToolsVersion "23.0.1"
-
     defaultConfig {
-        applicationId "com.joschimberg.trailassistant"
-        minSdkVersion 10
+        applicationId "lu.uni.trailassistant"
+        minSdkVersion 17
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
@@ -16,12 +23,29 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        debug {
+            signingConfig signingConfigs.config
+        }
+    }
+    defaultConfig {
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 }
-
+apply plugin: 'com.google.gms.google-services'
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.1.0'
-    compile 'com.android.support:design:23.1.0'
+    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'com.android.support:design:23.1.1'
+    compile 'com.google.android.gms:play-services-auth:8.3.0'
+    // Google Maps
+    compile 'com.google.android.gms:play-services-maps:8.3.0'
+    // Google Directions
+    compile 'com.github.jd-alexander:library:1.0.7'
+    // Instrumented tests dependencies
+    testCompile 'com.android.support:support-annotations:23.1.1'
+    testCompile 'com.android.support.test:runner:0.4.1'
+    testCompile 'com.android.support.test:rules:0.4.1'
+    testCompile 'org.mockito:mockito-core:1.10.19'
+    testCompile 'org.hamcrest:hamcrest-library:1.3'
 }

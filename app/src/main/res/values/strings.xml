@@ -1,6 +1,22 @@
 <resources>
-    <string name="app_name">TrailAssistant</string>
+    <string name="app_name">Trail Assistant</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_free_trail">FreeTrailActivity</string>
-    <string name="title_activity_predefined_route">PredefinedRouteActivity</string>
+    <string name="title_activity_free_trail">Free Trail</string>
+    <string name="title_activity_predefined_route">Predefined Route</string>
+    <string name="title_activity_google_maps_define_route">Google Maps Define Route</string>
+    <string name="title_activity_create_new_training_program">Create New Training Program</string>
+
+    <string-array name="exercise_mode">
+        <item>Running</item>
+        <item>Gym</item>
+    </string-array>
+    <string name="title_activity_edit_training_program_exercises">
+        Edit Training Program
+    </string>
+     <string name="title_activity_new_training_program_exercises">
+        New Training Program
+    </string>
+    <string name="title_activity_predefined_training_program">Predefined Training Program
+    </string>
+
 </resources>

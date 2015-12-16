@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView
+    android:id="@+id/exerciseToString"
+    android:text="Exercise"
+    android:textSize="17dp"
+    android:layout_height="wrap_content"
+    android:layout_width="fill_parent"
+    android:layout_marginBottom="5dp"
+    android:layout_marginTop="5dp"
+    android:paddingLeft="5dp"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp"
+    android:textAppearance="?android:attr/textAppearanceLarge"
+    xmlns:android="http://schemas.android.com/apk/res/android" />
