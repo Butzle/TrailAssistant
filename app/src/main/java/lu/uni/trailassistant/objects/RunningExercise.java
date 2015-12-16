@@ -9,47 +9,37 @@ import android.os.Parcelable;
 public class RunningExercise extends Exercise {
 
     private SPEED_MODE speedMode;
-    private int distance, duration;
+    private int distance;
 
-    public RunningExercise(int exerciseID, int duration, int distance, SPEED_MODE speedMode) {
+    public RunningExercise(int exerciseID, int distance, SPEED_MODE speedMode) {
         super(exerciseID);
         this.speedMode = speedMode;
-        this.duration = duration;
         this.distance = distance;
     }
 
     public SPEED_MODE getSpeedMode() { return speedMode; }
     public int getDistance() { return distance; }
-    public int getDuration() { return duration; }
 
     public void setSpeedMode(SPEED_MODE speedMode) { this.speedMode = speedMode; }
     public void setDistance(int distance) { this.distance = distance; }
-    public void setDuration(int duration) { this.duration = duration; }
 
     public String toString() {
         String str = "";
         switch(speedMode) {
             case FAST_WALK:
-                str = str + "Fast walk";
+                str = str + "Fast walk ";
                 break;
             case NORMAL:
-                str = str + "Run normally";
+                str = str + "Run normally ";
                 break;
             case SPRINT:
-                str = str + "Sprint";
+                str = str + "Sprint ";
                 break;
             default:
-                str = str + "Walk and breathe";
+                str = str + "Walk and breathe ";
                 break;
         }
-        if(duration == 0) {
-            str = str + " for " + distance + "m";
-        } else if (distance == 0) {
-            str = str + " for " + duration + " seconds";
-        } else {
-            str = str + " for " + distance + "m and " + duration + "seconds";
-        }
-        return str;
+        return str + "for " + distance + " meters";
     }
 
     public static SPEED_MODE getSpeedModeFromInt(int speed_mode) {
@@ -68,15 +58,13 @@ public class RunningExercise extends Exercise {
         super.writeToParcel(out, flags);
         out.writeInt(speedMode.ordinal());
         out.writeInt(distance);
-        out.writeInt(duration);
     }
     public static final Creator<RunningExercise> CREATOR = new Parcelable.Creator<RunningExercise>() {
         public RunningExercise createFromParcel(Parcel in) {
             int exerciseID = in.readInt();
             SPEED_MODE speedMode = getSpeedModeFromInt(in.readInt());
             int distance = in.readInt();
-            int duration = in.readInt();
-            return new RunningExercise(exerciseID, duration, distance, speedMode);
+            return new RunningExercise(exerciseID, distance, speedMode);
         }
 
         public RunningExercise[] newArray(int size) {

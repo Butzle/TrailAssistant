@@ -57,10 +57,9 @@ public class DBConnector {
 
     private RunningExercise getRunningExerciseFromCursor(Cursor cursor) {
         int runningExerciseID = cursor.getInt(0);
-        int duration = cursor.getInt(1);
-        int distance = cursor.getInt(2);
-        SPEED_MODE speedMode = RunningExercise.getSpeedModeFromInt(cursor.getInt(3));
-        RunningExercise runningExercise = new RunningExercise(runningExerciseID, duration, distance, speedMode);
+        int distance = cursor.getInt(1);
+        SPEED_MODE speedMode = RunningExercise.getSpeedModeFromInt(cursor.getInt(2));
+        RunningExercise runningExercise = new RunningExercise(runningExerciseID, distance, speedMode);
         return runningExercise;
     }
 
@@ -132,7 +131,7 @@ public class DBConnector {
         int currentCursor=1;
         while(!runningExerciseCursor.isAfterLast() || !gymExerciseCursor.isAfterLast()) {
             // add exercises in correct order to the training program, one by one
-            if(!runningExerciseCursor.isAfterLast() && runningExerciseCursor.getInt(4)==currentCursor) {
+            if(!runningExerciseCursor.isAfterLast() && runningExerciseCursor.getInt(3)==currentCursor) {
                 tp.appendExerciseToTail(getRunningExerciseFromCursor(runningExerciseCursor));
                 runningExerciseCursor.moveToNext();
                 currentCursor++;
@@ -177,7 +176,6 @@ public class DBConnector {
                 if (exercise instanceof RunningExercise) {
                     RunningExercise runningExercise = (RunningExercise) exercise;
                     ContentValues runningExerciseContentValues = new ContentValues();
-                    runningExerciseContentValues.put("duration", runningExercise.getDuration());
                     runningExerciseContentValues.put("distance", runningExercise.getDistance());
                     runningExerciseContentValues.put("speed_mode", runningExercise.getSpeedMode().ordinal());
                     runningExerciseContentValues.put("exercise_order", order);
@@ -236,7 +234,6 @@ public class DBConnector {
                 if (tempExercise instanceof RunningExercise) {
                     RunningExercise runningExercise = (RunningExercise) tempExercise;
                     contentValues = new ContentValues();
-                    contentValues.put("duration", runningExercise.getDuration());
                     contentValues.put("distance", runningExercise.getDistance());
                     contentValues.put("speed_mode", runningExercise.getSpeedMode().ordinal());
                     contentValues.put("exercise_order", order);
