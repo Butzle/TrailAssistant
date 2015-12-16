@@ -13,7 +13,7 @@ public class TrainingProgram {
     private String programName;
     // queue that contains all of the instructions belonging to a training program
     private LinkedList<Exercise> exercisesQueue;
-    private boolean showTrainingInstructions;   // TODO: do we still need this? not sure...
+    private boolean showTrainingInstructions;   //
     // another queue that represents our GPS trail
     private LinkedList<GPSCoord> gpsCoords;
 
@@ -52,7 +52,6 @@ public class TrainingProgram {
     }
 
     // replaces an activity in the queue with another one (can be used to modify an activity as well)
-    // (TODO: maybe introduce own modify() method just for modifications? might be more efficient)
     public void replaceExercise(int index, Exercise newActivity) {
         exercisesQueue.set(index, newActivity);
     }
