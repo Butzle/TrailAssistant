@@ -227,7 +227,7 @@ public class AddExerciseActivity extends AppCompatActivity {
     public void onClickAddButton(View view) {
         // add Exercise to the LinkedList
         if(spinnerExerciseMode.getSelectedItem().toString().equals("Running")) {
-            RunningExercise runningExercise = new RunningExercise(0, 0, Integer.parseInt(distanceEditText.getText().toString()), (SPEED_MODE)speedModeSpinner.getSelectedItem());
+            RunningExercise runningExercise = new RunningExercise(0, Integer.parseInt(distanceEditText.getText().toString()), (SPEED_MODE)speedModeSpinner.getSelectedItem());
             exercisesToBeAdded.put(currentExerciseIndex, runningExercise);
             currentExerciseIndex++;
             totalRemainingDistanceInMeter -= Integer.parseInt(distanceEditText.getText().toString());

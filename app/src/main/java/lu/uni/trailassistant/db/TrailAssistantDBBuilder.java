@@ -12,12 +12,11 @@ import android.util.Log;
 public class TrailAssistantDBBuilder extends SQLiteOpenHelper {
     // Database information
     private static final String DB_NAME = "trailassistant";
-    private static final int DB_VERSION = 12;
+    private static final int DB_VERSION = 13;
 
     // RunningExercise table
     private static final String DB_RUNNING_EXERCISE_TABLE_NAME = "RunningExercise";
     private static final String DB_RUNNING_EXERCISE_ID = "_id integer primary key autoincrement";
-    private static final String DB_RUNNING_EXERCISE_DURATION = "duration integer default 0";
     private static final String DB_RUNNING_EXERCISE_DISTANCE = "distance integer default 0";
     private static final String DB_RUNNING_EXERCISE_SPEED_MODE = "speed_mode tinyint not null";
     private static final String DB_RUNNING_EXERCISE_ORDER = "exercise_order tinyint not null";
@@ -56,7 +55,7 @@ public class TrailAssistantDBBuilder extends SQLiteOpenHelper {
     // create table SQL command for table Exercise
     private static final String DB_CREATE_RUNNING_EXERCISE_TABLE =
             "create table " + DB_RUNNING_EXERCISE_TABLE_NAME + "(" + DB_RUNNING_EXERCISE_ID + ", " +
-            DB_RUNNING_EXERCISE_DURATION + ", " + DB_RUNNING_EXERCISE_DISTANCE + ", " + DB_RUNNING_EXERCISE_SPEED_MODE + ", " + DB_RUNNING_EXERCISE_ORDER + ", " + DB_RUNNING_EXERCISE_TRAINING_PROGRAM_FKEY + ")";
+             DB_RUNNING_EXERCISE_DISTANCE + ", " + DB_RUNNING_EXERCISE_SPEED_MODE + ", " + DB_RUNNING_EXERCISE_ORDER + ", " + DB_RUNNING_EXERCISE_TRAINING_PROGRAM_FKEY + ")";
 
     // create table SQL command for table Exercise
     private static final String DB_CREATE_GYM_EXERCISE_TABLE =
@@ -119,9 +118,9 @@ public class TrailAssistantDBBuilder extends SQLiteOpenHelper {
                                     "(NULL, 6.109276, 49.607214, 4, 1), " +
                                     "(NULL, 6.111636, 49.604339, 5, 1), " +
                                     "(NULL, 6.112159, 49.606251, 6, 1)";
-        String insertRunningExercises =    "insert into RunningExercise values (NULL, 360, 0, 2, 1, 1), " +
-                                    "(NULL, 0, 300, 3, 2, 1), " +
-                                    "(NULL, 120, 0, 1, 3, 1)";
+        String insertRunningExercises =    "insert into RunningExercise values (NULL, 4000, 2, 1, 1), " +
+                                    "(NULL, 1000, 3, 2, 1), " +
+                                    "(NULL, 500, 1, 3, 1)";
         String insertGymExercises = "insert into GymExercise values (NULL, 20, 0, 0, 4, 1)";
 
         // insert new training program and retrieve its ID

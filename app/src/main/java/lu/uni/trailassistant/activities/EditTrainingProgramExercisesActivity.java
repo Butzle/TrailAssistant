@@ -5,6 +5,9 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.Layout;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -30,6 +33,7 @@ public class EditTrainingProgramExercisesActivity extends AppCompatActivity {
     ListView exercisesListView;
     ArrayAdapter<Exercise> exerciseAdapter;
     int lastSelectedIndex = -1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +80,18 @@ public class EditTrainingProgramExercisesActivity extends AppCompatActivity {
                 lastSelectedIndex = position;
             }
         });
+
+        // set listener
+        trainingProgramNameEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(!hasFocus) {
+                    v.clearFocus();
+                    ((View)findViewById(R.id.invisibleLayout)).requestFocus();
+                }
+            }
+        });
+
     }
 
     public void onClickAddTrainingExerciseButton(View view) {
