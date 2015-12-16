@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -30,6 +31,7 @@ public class NewTrainingProgramActivity extends AppCompatActivity {
     Double totalDistanceInMeter;
     static final int ADD_EXERCISES=1;
     ArrayAdapter<Exercise> exerciseAdapter;
+    Button moveUpButton, moveDownButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +46,13 @@ public class NewTrainingProgramActivity extends AppCompatActivity {
         latitudes = (ArrayList<Double>)getIntent().getSerializableExtra("latitudesArrayList");
         longitudes = (ArrayList<Double>)getIntent().getSerializableExtra("longitudesArrayList");
         totalDistanceInMeter = getIntent().getDoubleExtra("totalDistanceInMeter", 0);
+
+
+        moveUpButton = (Button)findViewById(R.id.moveUpButton);
+        moveDownButton = (Button)findViewById(R.id.moveDownButton);
+
+        moveUpButton.setVisibility(View.GONE);
+        moveDownButton.setVisibility(View.GONE);
 
        if(!latitudes.isEmpty() && !longitudes.isEmpty() && totalDistanceInMeter != 0) {
             // create new training program

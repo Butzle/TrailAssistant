@@ -30,6 +30,7 @@ public class EditTrainingProgramExercisesActivity extends AppCompatActivity {
     ListView exercisesListView;
     ArrayAdapter<Exercise> exerciseAdapter;
     int lastSelectedIndex = -1;
+    boolean editTextIsFocused;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,21 +44,37 @@ public class EditTrainingProgramExercisesActivity extends AppCompatActivity {
         addExerciseButton = (Button)findViewById(R.id.add_exercise_button);
         addExerciseButton.setEnabled(false);
         moveUpButton = (Button)findViewById(R.id.moveUpButton);
-        moveUpButton.setEnabled(false);
+        moveUpButton.setEnabled(true);
         moveDownButton = (Button)findViewById(R.id.moveDownButton);
-        moveDownButton.setEnabled(false);
+        moveDownButton.setEnabled(true);
+
+        editTextIsFocused = false;
+
 
         // retrieve training program ID from intent and the associated training program from the database
         Long trainingProgramIDLong = getIntent().getLongExtra("training_program_id", 0);
         trainingProgramID = Integer.valueOf(trainingProgramIDLong.intValue());
         //Log.i(EditTrainingProgramExercisesActivity.class.getName(), "Training Program ID that was received by intent: " + trainingProgramID);
-        // TODO: maybe check for case in which intent has no data appended to it (=0)? is this possible? ask teacher
         DBConnector dbc = new DBConnector(this);
         dbc.openConnection();
         trainingProgram = dbc.getTrainingProgramFromID(trainingProgramID);
         trainingProgramNameEditText = (EditText) findViewById(R.id.trainingProgramNameEditText);
         trainingProgramNameEditText.setText(trainingProgram.getProgramName());
         trainingProgramNameEditText.clearFocus();
+        trainingProgramNameEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus){
+                    moveUpButton.setVisibility(View.INVISIBLE);
+                    moveDownButton.setVisibility(View.INVISIBLE);
+                    editTextIsFocused = true;
+                }else {
+                    moveUpButton.setVisibility(View.VISIBLE);
+                    moveDownButton.setVisibility(View.VISIBLE);
+                    editTextIsFocused = false;
+                }
+            }
+        });
 
         // populate list view with exercises
         exercisesListView = (ListView) findViewById(R.id.exercisesListView);
@@ -140,15 +157,10 @@ public class EditTrainingProgramExercisesActivity extends AppCompatActivity {
         }
     }
 
-    public void onClickDeleteButton(View view) {
-        trainingProgram.getExercises().remove(lastSelectedIndex);
-        exerciseAdapter.notifyDataSetChanged();
+    public void checkIfEditTextIsFocused(View view){
+        if(editTextIsFocused){
+            trainingProgramNameEditText.clearFocus();
+        }
     }
 
-    /*public void onClickModify(View view) {
-        Intent intent = new Intent(this, AddExerciseActivity.class);
-        intent.putExtra("exercise", exerciseAdapter.getItem(lastSelectedIndex));
-        intent.putExtra("request_code", EDIT_EXERCISE);
-        startActivityForResult(intent, EDIT_EXERCISE);
-    }*/
 }
