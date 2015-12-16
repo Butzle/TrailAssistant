@@ -93,7 +93,7 @@ public class TrailAssistantDBBuilder extends SQLiteOpenHelper {
         database.execSQL(DB_CREATE_GYM_EXERCISE_TABLE);
         database.execSQL(DB_CREATE_GPS_COORD_TABLE);
         database.execSQL(DB_CREATE_HISTORY_TABLE);
-        insertDummyData(database);
+        //insertDummyData(database);
     }
 
     @Override
