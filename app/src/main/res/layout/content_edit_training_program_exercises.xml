@@ -68,8 +68,8 @@
         android:text="Save"
         android:id="@+id/saveButton"
         android:drawableLeft="@drawable/save"
-        android:layout_alignTop="@+id/add_exercise_button"
-        android:layout_alignEnd="@+id/exercisesListView"
+        android:layout_above="@+id/add_exercise_button"
+        android:layout_alignStart="@+id/exercisesListView"
         android:textSize="13dp"
         android:drawablePadding="5dp"
         android:onClick="onClickSaveButton" />
@@ -99,8 +99,8 @@
         android:text="Move down"
         android:textSize="12dp"
         android:id="@+id/moveDownButton"
-        android:layout_above="@+id/saveButton"
-        android:layout_alignStart="@+id/moveUpButton"
+        android:layout_alignTop="@+id/add_exercise_button"
+        android:layout_alignEnd="@+id/exercisesListView"
         android:onClick="onClickMoveDownButton" />
 
     <Button
