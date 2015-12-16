@@ -63,6 +63,8 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity implem
     private LatLng lastCheckpoint;
     private LatLng currentLocation;
 
+    private Iterator<LatLng> predefinedPathPointsIterator;
+
 
     private static final String TAG = "TrailTrainingProgram";
 
@@ -83,6 +85,8 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity implem
 
 
         currentExercise = null;
+
+        predefinedPathPointsIterator = null;
 
 
         predefinedPathPoints = new ArrayList<LatLng>();
@@ -126,6 +130,7 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity implem
         if(lastCheckpoint == null) {
             lastCheckpoint = predefinedPathPoints.get(0);
             currentLocation = lastCheckpoint;
+            predefinedPathPointsIterator = predefinedPathPoints.iterator();
             executeExerciseStack();
         }
 
@@ -152,7 +157,6 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity implem
 
             nextLocation = new Thread(new Runnable() {
                 public void run() {
-                    Iterator<LatLng> predefinedPathPointsIterator = predefinedPathPoints.iterator();
                     LatLng nextPoint;
                     while (isInForeground && predefinedPathPointsIterator.hasNext()) {
                         if (!isPerformingGymExercise) {
@@ -195,11 +199,12 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity implem
                 }
                 // to check if the user run more than the distance of the running exercise
                 float differenceFromLastRunnungExercise = 0;
+                float distanceOfRunningExercise = 0, currentDistanceToLastCheckPoint = 0;
                 while (isInForeground) {
                     if (currentExercise == null && exerciseListIterator.hasNext()){
                         currentExercise = exerciseListIterator.next();
+                        Log.i(TAG,"initialize");
                     }
-                    float distanceOfRunningExercise = 0, currentDistanceToLastCheckPoint = 0;
                     if (currentExercise instanceof RunningExercise) {
 
 
@@ -225,6 +230,7 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity implem
                                 currentExercise = exerciseListIterator.next();
                                 lastCheckpoint = currentLocation;
                                 isNewExercise = true;
+                                Log.i(TAG, "has Next");
                                 continue;
                             }
                         }
@@ -247,6 +253,7 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity implem
                             currentExercise = exerciseListIterator.next();
                             Log.i(TAG, "has Next");
                             isNewExercise = true;
+                            isPerformingGymExercise = false;
                             continue;
                         }
 
