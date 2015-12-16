@@ -12,7 +12,7 @@ import android.util.Log;
 public class TrailAssistantDBBuilder extends SQLiteOpenHelper {
     // Database information
     private static final String DB_NAME = "trailassistant";
-    private static final int DB_VERSION = 13;
+    private static final int DB_VERSION = 14;
 
     // RunningExercise table
     private static final String DB_RUNNING_EXERCISE_TABLE_NAME = "RunningExercise";
@@ -93,7 +93,7 @@ public class TrailAssistantDBBuilder extends SQLiteOpenHelper {
         database.execSQL(DB_CREATE_GYM_EXERCISE_TABLE);
         database.execSQL(DB_CREATE_GPS_COORD_TABLE);
         database.execSQL(DB_CREATE_HISTORY_TABLE);
-        insertDummyData(database);
+        //insertDummyData(database);
     }
 
     @Override
