@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.HashMap;
@@ -33,6 +34,7 @@ public class EditTrainingProgramExercisesActivity extends AppCompatActivity {
     ListView exercisesListView;
     ArrayAdapter<Exercise> exerciseAdapter;
     int lastSelectedIndex = -1;
+    boolean editTextIsFocused;
 
 
     @Override
@@ -47,21 +49,35 @@ public class EditTrainingProgramExercisesActivity extends AppCompatActivity {
         addExerciseButton = (Button)findViewById(R.id.add_exercise_button);
         addExerciseButton.setEnabled(false);
         moveUpButton = (Button)findViewById(R.id.moveUpButton);
-        moveUpButton.setEnabled(false);
+        moveUpButton.setVisibility(View.INVISIBLE);
         moveDownButton = (Button)findViewById(R.id.moveDownButton);
-        moveDownButton.setEnabled(false);
+        moveDownButton.setVisibility(View.INVISIBLE);
+
+        editTextIsFocused = true;
+
 
         // retrieve training program ID from intent and the associated training program from the database
         Long trainingProgramIDLong = getIntent().getLongExtra("training_program_id", 0);
         trainingProgramID = Integer.valueOf(trainingProgramIDLong.intValue());
         //Log.i(EditTrainingProgramExercisesActivity.class.getName(), "Training Program ID that was received by intent: " + trainingProgramID);
-        // TODO: maybe check for case in which intent has no data appended to it (=0)? is this possible? ask teacher
         DBConnector dbc = new DBConnector(this);
         dbc.openConnection();
         trainingProgram = dbc.getTrainingProgramFromID(trainingProgramID);
         trainingProgramNameEditText = (EditText) findViewById(R.id.trainingProgramNameEditText);
         trainingProgramNameEditText.setText(trainingProgram.getProgramName());
-        trainingProgramNameEditText.clearFocus();
+        trainingProgramNameEditText.requestFocus();
+        trainingProgramNameEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus){
+                    moveUpButton.setVisibility(View.INVISIBLE);
+                    moveDownButton.setVisibility(View.INVISIBLE);
+                    editTextIsFocused = true;
+                }else {
+                    editTextIsFocused = false;
+                }
+            }
+        });
 
         // populate list view with exercises
         exercisesListView = (ListView) findViewById(R.id.exercisesListView);
@@ -73,6 +89,8 @@ public class EditTrainingProgramExercisesActivity extends AppCompatActivity {
         exercisesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                moveUpButton.setVisibility(View.VISIBLE);
+                moveDownButton.setVisibility(View.VISIBLE);
                 if(lastSelectedIndex == -1) {
                     moveUpButton.setEnabled(true);
                     moveDownButton.setEnabled(true);
@@ -156,15 +174,12 @@ public class EditTrainingProgramExercisesActivity extends AppCompatActivity {
         }
     }
 
-    public void onClickDeleteButton(View view) {
-        trainingProgram.getExercises().remove(lastSelectedIndex);
-        exerciseAdapter.notifyDataSetChanged();
+    public void checkIfEditTextIsFocused(View view){
+        if(editTextIsFocused){
+            trainingProgramNameEditText.clearFocus();
+        }
+        moveUpButton.setVisibility(View.INVISIBLE);
+        moveDownButton.setVisibility(View.INVISIBLE);
     }
 
-    /*public void onClickModify(View view) {
-        Intent intent = new Intent(this, AddExerciseActivity.class);
-        intent.putExtra("exercise", exerciseAdapter.getItem(lastSelectedIndex));
-        intent.putExtra("request_code", EDIT_EXERCISE);
-        startActivityForResult(intent, EDIT_EXERCISE);
-    }*/
 }
