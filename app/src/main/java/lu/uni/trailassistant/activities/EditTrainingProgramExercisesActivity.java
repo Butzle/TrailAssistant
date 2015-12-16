@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.HashMap;
@@ -44,11 +45,11 @@ public class EditTrainingProgramExercisesActivity extends AppCompatActivity {
         addExerciseButton = (Button)findViewById(R.id.add_exercise_button);
         addExerciseButton.setEnabled(false);
         moveUpButton = (Button)findViewById(R.id.moveUpButton);
-        moveUpButton.setEnabled(true);
+        moveUpButton.setVisibility(View.INVISIBLE);
         moveDownButton = (Button)findViewById(R.id.moveDownButton);
-        moveDownButton.setEnabled(true);
+        moveDownButton.setVisibility(View.INVISIBLE);
 
-        editTextIsFocused = false;
+        editTextIsFocused = true;
 
 
         // retrieve training program ID from intent and the associated training program from the database
@@ -60,7 +61,7 @@ public class EditTrainingProgramExercisesActivity extends AppCompatActivity {
         trainingProgram = dbc.getTrainingProgramFromID(trainingProgramID);
         trainingProgramNameEditText = (EditText) findViewById(R.id.trainingProgramNameEditText);
         trainingProgramNameEditText.setText(trainingProgram.getProgramName());
-        trainingProgramNameEditText.clearFocus();
+        trainingProgramNameEditText.requestFocus();
         trainingProgramNameEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -69,8 +70,6 @@ public class EditTrainingProgramExercisesActivity extends AppCompatActivity {
                     moveDownButton.setVisibility(View.INVISIBLE);
                     editTextIsFocused = true;
                 }else {
-                    moveUpButton.setVisibility(View.VISIBLE);
-                    moveDownButton.setVisibility(View.VISIBLE);
                     editTextIsFocused = false;
                 }
             }
@@ -86,6 +85,8 @@ public class EditTrainingProgramExercisesActivity extends AppCompatActivity {
         exercisesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                moveUpButton.setVisibility(View.VISIBLE);
+                moveDownButton.setVisibility(View.VISIBLE);
                 if(lastSelectedIndex == -1) {
                     moveUpButton.setEnabled(true);
                     moveDownButton.setEnabled(true);
@@ -161,6 +162,8 @@ public class EditTrainingProgramExercisesActivity extends AppCompatActivity {
         if(editTextIsFocused){
             trainingProgramNameEditText.clearFocus();
         }
+        moveUpButton.setVisibility(View.INVISIBLE);
+        moveDownButton.setVisibility(View.INVISIBLE);
     }
 
 }

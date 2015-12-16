@@ -41,6 +41,7 @@ public class NewTrainingProgramActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         trainingProgramNameEditText = (EditText) findViewById(R.id.trainingProgramNameEditText);
         trainingProgramNameEditText.setText("Enter Name");
+        trainingProgramNameEditText.requestFocus();
         trainingProgramNameEditText.selectAll();
 
         latitudes = (ArrayList<Double>)getIntent().getSerializableExtra("latitudesArrayList");
@@ -108,5 +109,9 @@ public class NewTrainingProgramActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    public void checkIfEditTextIsFocused(View view){
+
     }
 }
