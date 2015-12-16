@@ -27,6 +27,9 @@ android {
             signingConfig signingConfigs.config
         }
     }
+    defaultConfig {
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
 }
 apply plugin: 'com.google.gms.google-services'
 dependencies {
@@ -37,7 +40,12 @@ dependencies {
     compile 'com.google.android.gms:play-services-auth:8.3.0'
     // Google Maps
     compile 'com.google.android.gms:play-services-maps:8.3.0'
-
     // Google Directions
     compile 'com.github.jd-alexander:library:1.0.7'
+    // Instrumented tests dependencies
+    testCompile 'com.android.support:support-annotations:23.1.1'
+    testCompile 'com.android.support.test:runner:0.4.1'
+    testCompile 'com.android.support.test:rules:0.4.1'
+    testCompile 'org.mockito:mockito-core:1.10.19'
+    testCompile 'org.hamcrest:hamcrest-library:1.3'
 }

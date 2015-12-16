@@ -159,7 +159,7 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity implem
                 public void run() {
                     LatLng nextPoint;
                     while (isInForeground && predefinedPathPointsIterator.hasNext()) {
-                        if (!isPerformingGymExercise) {
+                        if (!isPerformingGymExercise || !isSpeakInitialized) {
                             nextPoint = predefinedPathPointsIterator.next();
                             mock.pushLocation(nextPoint.latitude, nextPoint.longitude);
 
@@ -221,6 +221,7 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity implem
                         Log.i(TAG, Double.toString(distanceOfRunningExercise));
 
                         currentDistanceToLastCheckPoint = getDistanceBetweenTwoPoints(lastCheckpoint, currentLocation);
+
                         Log.i(TAG, "current distance = "+Double.toString(currentDistanceToLastCheckPoint));
                         // double precision problems, therefore <= 1 and not <= 0
                         if (distanceOfRunningExercise - currentDistanceToLastCheckPoint <= 1) {
@@ -253,12 +254,18 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity implem
                             currentExercise = exerciseListIterator.next();
                             Log.i(TAG, "has Next");
                             isNewExercise = true;
-                            isPerformingGymExercise = false;
                             continue;
                         }
 
                     }
                     if (!exerciseListIterator.hasNext()){
+                        while(predefinedPathPointsIterator.hasNext()){
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
                         if(isTextToSpeechSuccess){
                             speak("Training Program Terminated");
                         }
