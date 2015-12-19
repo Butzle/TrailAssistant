@@ -222,6 +222,14 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity implem
 
                         currentDistanceToLastCheckPoint = getDistanceBetweenTwoPoints(lastCheckpoint, currentLocation);
 
+                        if(currentDistanceToLastCheckPoint == 0){
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
                         Log.i(TAG, "current distance = "+Double.toString(currentDistanceToLastCheckPoint));
                         // double precision problems, therefore <= 1 and not <= 0
                         if (distanceOfRunningExercise - currentDistanceToLastCheckPoint <= 1) {
