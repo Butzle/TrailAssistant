@@ -22,6 +22,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
@@ -53,6 +54,8 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity implem
     private Exercise currentExercise;
     private Thread exerciseStack;
     private boolean isPerformingGymExercise;
+
+    private Marker lastMarker;
 
     private TextToSpeech tts;
     private boolean isTextToSpeechSuccess;
@@ -90,6 +93,8 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity implem
 
 
         predefinedPathPoints = new ArrayList<LatLng>();
+
+        lastMarker = null;
 
         // retrieve selected ID from Intent
         Intent intent = getIntent();
@@ -309,7 +314,11 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity implem
             map.moveCamera(center);
             map.animateCamera(zoom);
         } else {
-            map.addMarker(currentPosition);
+            if (lastMarker != null) {
+                lastMarker.remove();
+            }
+            map.addMarker(startMarker);
+            lastMarker = map.addMarker(currentPosition);
             drawPredefinedPath = false;
             traceRoute(waypoints);
             CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude()));

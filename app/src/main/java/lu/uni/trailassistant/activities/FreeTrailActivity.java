@@ -20,15 +20,17 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 
 import java.util.ArrayList;
+import java.util.ListIterator;
 import java.util.Random;
 
 import lu.uni.trailassistant.R;
 import lu.uni.trailassistant.mock.MockLocationProvider;
-
+import lu.uni.trailassistant.mock.MockPath;
 
 
 public class FreeTrailActivity extends TrailActivity {
@@ -38,8 +40,7 @@ public class FreeTrailActivity extends TrailActivity {
     private Location startLocation;
     private MarkerOptions startMarker;
     private MarkerOptions currentPosition;
-    private double lat;
-    private double lon;
+    private Marker lastMarker;
     private Thread nextLocation;
 
 
@@ -51,10 +52,10 @@ public class FreeTrailActivity extends TrailActivity {
         isMockEnabled = false;
 
         isInForeground = true;
-        lat = 49.600896;
-        lon = 6.154168;
 
         totalDistanceInMeter = 0;
+
+        lastMarker = null;
     }
 
 
@@ -119,8 +120,6 @@ public class FreeTrailActivity extends TrailActivity {
                 mock = new MockLocationProvider("Map", this);
             }
 
-            // set the start location
-            mock.pushLocation(lat, lon);
 
             LocationManager locMgr = (LocationManager)
                     getSystemService(LOCATION_SERVICE);
@@ -138,14 +137,11 @@ public class FreeTrailActivity extends TrailActivity {
 
             nextLocation = new Thread(new Runnable() {
                 public void run() {
-                    lat = 49.600896;
-                    lon = 6.154168;
-                    while (isInForeground) {
-                        Random r = new Random();
-                        mock.pushLocation(lat, lon);
-                        // calculate random next location
-                        lat += 0.0008;
-                        lon += 0.0009 + (0.0001 - 0.00005) * r.nextDouble();
+                    ListIterator<LatLng> pathIterator = MockPath.PATH.listIterator();
+                    LatLng nextLocation;
+                    while (isInForeground && pathIterator.hasNext()) {
+                        nextLocation = pathIterator.next();
+                        mock.pushLocation(nextLocation.latitude, nextLocation.longitude);
 
                         try {
                             // ask every 10 seconds for a new location
@@ -181,7 +177,11 @@ public class FreeTrailActivity extends TrailActivity {
             map.moveCamera(center);
             map.animateCamera(zoom);
         } else {
-            map.addMarker(currentPosition);
+            if (lastMarker != null) {
+                lastMarker.remove();
+            }
+            map.addMarker(startMarker);
+            lastMarker = map.addMarker(currentPosition);
             traceRoute();
             CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude()));
             map.moveCamera(center);

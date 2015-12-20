@@ -115,14 +115,6 @@ public abstract class AbstractRouteActivity extends FragmentActivity implements 
 
     }
 
-    public void onRoutingSuccess(PolylineOptions mPolyOptions)
-    {
-        PolylineOptions polyoptions = new PolylineOptions();
-        polyoptions.color(Color.CYAN);
-        polyoptions.width(10);
-        polyoptions.addAll(mPolyOptions.getPoints());
-        map.addPolyline(polyoptions);
-    }
 
     @Override
     public void onRoutingFailure() {
