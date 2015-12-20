@@ -107,9 +107,7 @@ public abstract class AbstractRouteActivity extends FragmentActivity implements 
             polyOptions.addAll(path.getPoints());
             Polyline polyline = map.addPolyline(polyOptions);
             polylines.add(polyline);
-
-            // log the distance and duration
-            Log.i(TAG, "[Route] distance: " + path.getDistanceText() + ", duration: " + path.getDurationValue() + " sec");
+            
         }
 
 
