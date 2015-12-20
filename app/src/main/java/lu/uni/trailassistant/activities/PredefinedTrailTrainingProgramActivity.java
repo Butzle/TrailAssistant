@@ -65,6 +65,7 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity implem
     // needed to calculate the distance to compare with the running exercise distance
     private LatLng lastCheckpoint;
     private LatLng currentLocation;
+    private LatLng lastLocation;
 
     private Iterator<LatLng> predefinedPathPointsIterator;
 
@@ -79,6 +80,8 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity implem
         isMockEnabled = false;
         isInForeground = true;
         isPerformingGymExercise = false;
+
+        lastLocation = null;
 
 
         isTextToSpeechSuccess = false;
@@ -225,7 +228,8 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity implem
 
                         Log.i(TAG, Double.toString(distanceOfRunningExercise));
 
-                        currentDistanceToLastCheckPoint = getDistanceBetweenTwoPoints(lastCheckpoint, currentLocation);
+                        currentDistanceToLastCheckPoint += getDistanceBetweenTwoPoints(lastLocation, currentLocation);
+                        lastLocation = currentLocation;
 
                         if(currentDistanceToLastCheckPoint == 0){
                             try {
@@ -235,7 +239,7 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity implem
                             }
                         }
 
-                        Log.i(TAG, "current distance = "+Double.toString(currentDistanceToLastCheckPoint));
+                        Log.i(TAG, "current distance = " + Double.toString(currentDistanceToLastCheckPoint));
                         // double precision problems, therefore <= 1 and not <= 0
                         if (distanceOfRunningExercise - currentDistanceToLastCheckPoint <= 1) {
                             differenceFromLastRunnungExercise = currentDistanceToLastCheckPoint - distanceOfRunningExercise;
@@ -243,6 +247,8 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity implem
                             if(exerciseListIterator.hasNext()) {
                                 currentExercise = exerciseListIterator.next();
                                 lastCheckpoint = currentLocation;
+                                lastLocation = lastCheckpoint;
+                                currentDistanceToLastCheckPoint = 0;
                                 isNewExercise = true;
                                 Log.i(TAG, "has Next");
                                 continue;
@@ -299,7 +305,7 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity implem
 
     @Override
     public void onLocationChanged(Location location) {
-
+        lastLocation = currentLocation;
         currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
         waypoints.add(new LatLng(location.getLatitude(), location.getLongitude()));
         currentPosition = new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude())).title("Me");
