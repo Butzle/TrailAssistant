@@ -10,7 +10,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 
 import com.directions.route.Route;
 import com.directions.route.RoutingListener;
@@ -107,7 +106,7 @@ public abstract class AbstractRouteActivity extends FragmentActivity implements 
             polyOptions.addAll(path.getPoints());
             Polyline polyline = map.addPolyline(polyOptions);
             polylines.add(polyline);
-            
+
         }
 
 
