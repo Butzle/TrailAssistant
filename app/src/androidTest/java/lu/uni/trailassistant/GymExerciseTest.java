@@ -1,4 +1,4 @@
-package lu.uni.trailassistant.objects;
+package lu.uni.trailassistant;
 
 /**
  * Created by leandrogil on 16.12.15.
@@ -6,6 +6,8 @@ package lu.uni.trailassistant.objects;
 
 import android.os.Parcel;
 import android.support.test.runner.AndroidJUnit4;
+import lu.uni.trailassistant.objects.GYM_MODE;
+import lu.uni.trailassistant.objects.GymExercise;
 
 import org.junit.runner.RunWith;
 
@@ -52,6 +54,9 @@ public class GymExerciseTest {
 
         // reconstruct original exercise from the Parcelable object
         GymExercise gymExercise2 = GymExercise.CREATOR.createFromParcel(parcel);
-        assertEquals(gymExercise, gymExercise2);
+        assertEquals(gymExercise.getDuration(), gymExercise2.getDuration());
+        assertEquals(gymExercise.getRepetitions(), gymExercise2.getRepetitions());
+        assertEquals(gymExercise.getExerciseID(), gymExercise2.getExerciseID());
+        assertEquals(gymExercise.getGymMode(), gymExercise2.getGymMode());
     }
 }

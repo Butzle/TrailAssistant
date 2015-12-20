@@ -10,7 +10,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 
 import com.directions.route.Route;
 import com.directions.route.RoutingListener;
@@ -108,21 +107,11 @@ public abstract class AbstractRouteActivity extends FragmentActivity implements 
             Polyline polyline = map.addPolyline(polyOptions);
             polylines.add(polyline);
 
-            // log the distance and duration
-            Log.i(TAG, "[Route] distance: " + path.getDistanceText() + ", duration: " + path.getDurationValue() + " sec");
         }
 
 
     }
 
-    public void onRoutingSuccess(PolylineOptions mPolyOptions)
-    {
-        PolylineOptions polyoptions = new PolylineOptions();
-        polyoptions.color(Color.CYAN);
-        polyoptions.width(10);
-        polyoptions.addAll(mPolyOptions.getPoints());
-        map.addPolyline(polyoptions);
-    }
 
     @Override
     public void onRoutingFailure() {

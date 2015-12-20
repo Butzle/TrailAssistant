@@ -53,15 +53,6 @@ public class PredefinedRouteActivity extends AppCompatActivity {
         trainingProgramListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                /*if(trainingProgramListView.getSelectedItemPosition() != AdapterView.INVALID_POSITION) {
-                    showHistoryButton.setEnabled(true);
-                    openProgramButton.setEnabled(true);
-                } else {
-                    showHistoryButton.setEnabled(false);
-                    openProgramButton.setEnabled(false);
-                }*/
-                // enable Buttons as soon as user clicks on an item in the ListView
-                //showHistoryButton.setEnabled(true);
                 editProgramButton.setEnabled(true);
                 startTrainingProgramButton.setEnabled(true);
                 lastSelectedIndex = position;
@@ -72,15 +63,12 @@ public class PredefinedRouteActivity extends AppCompatActivity {
     // Start a new Training Program
     public void onClickStartTrainingProgram(View view) {
         Intent intent = new Intent(this, PredefinedTrailTrainingProgramActivity.class);
-        //Log.i(PredefinedRouteActivity.class.getName(), "Training Program ID set by intent: " + trainingProgramRowID);
         intent.putExtra("training_program_id", tpca.getItemId(lastSelectedIndex));
         startActivity(intent);
     }
 
     public void newTrainingProgram(View view){
         Intent intent = new Intent(this, GoogleMapsDefineShortestRouteActivity.class);
-        //Log.i(PredefinedRouteActivity.class.getName(), "Training Program ID set by intent: " + trainingProgramRowID);
-        // intent.putExtra("training_program_id", tpca.getItemId(lastSelectedIndex));
         startActivity(intent);
     }
 

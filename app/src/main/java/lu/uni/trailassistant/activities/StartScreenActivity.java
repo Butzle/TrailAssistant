@@ -33,7 +33,6 @@ public class StartScreenActivity extends AppCompatActivity {
 
     public void newTrainingProgram(View view){
         Intent intent = new Intent(this, GoogleMapsDefineShortestRouteActivity.class);
-        //Log.i(PredefinedRouteActivity.class.getName(), "Training Program ID set by intent: " + trainingProgramRowID);
         startActivity(intent);
     }
 }

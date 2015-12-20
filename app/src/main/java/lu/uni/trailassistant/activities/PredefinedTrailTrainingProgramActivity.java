@@ -22,6 +22,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
@@ -54,6 +55,8 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity implem
     private Thread exerciseStack;
     private boolean isPerformingGymExercise;
 
+    private Marker lastMarker;
+
     private TextToSpeech tts;
     private boolean isTextToSpeechSuccess;
     private boolean isNewExercise;
@@ -62,6 +65,7 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity implem
     // needed to calculate the distance to compare with the running exercise distance
     private LatLng lastCheckpoint;
     private LatLng currentLocation;
+    private LatLng lastLocation;
 
     private Iterator<LatLng> predefinedPathPointsIterator;
 
@@ -77,6 +81,8 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity implem
         isInForeground = true;
         isPerformingGymExercise = false;
 
+        lastLocation = null;
+
 
         isTextToSpeechSuccess = false;
         isNewExercise = true;
@@ -90,6 +96,8 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity implem
 
 
         predefinedPathPoints = new ArrayList<LatLng>();
+
+        lastMarker = null;
 
         // retrieve selected ID from Intent
         Intent intent = getIntent();
@@ -220,9 +228,18 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity implem
 
                         Log.i(TAG, Double.toString(distanceOfRunningExercise));
 
-                        currentDistanceToLastCheckPoint = getDistanceBetweenTwoPoints(lastCheckpoint, currentLocation);
+                        currentDistanceToLastCheckPoint += getDistanceBetweenTwoPoints(lastLocation, currentLocation);
+                        lastLocation = currentLocation;
 
-                        Log.i(TAG, "current distance = "+Double.toString(currentDistanceToLastCheckPoint));
+                        if(currentDistanceToLastCheckPoint == 0){
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        Log.i(TAG, "current distance = " + Double.toString(currentDistanceToLastCheckPoint));
                         // double precision problems, therefore <= 1 and not <= 0
                         if (distanceOfRunningExercise - currentDistanceToLastCheckPoint <= 1) {
                             differenceFromLastRunnungExercise = currentDistanceToLastCheckPoint - distanceOfRunningExercise;
@@ -230,6 +247,8 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity implem
                             if(exerciseListIterator.hasNext()) {
                                 currentExercise = exerciseListIterator.next();
                                 lastCheckpoint = currentLocation;
+                                lastLocation = lastCheckpoint;
+                                currentDistanceToLastCheckPoint = 0;
                                 isNewExercise = true;
                                 Log.i(TAG, "has Next");
                                 continue;
@@ -286,7 +305,7 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity implem
 
     @Override
     public void onLocationChanged(Location location) {
-
+        lastLocation = currentLocation;
         currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
         waypoints.add(new LatLng(location.getLatitude(), location.getLongitude()));
         currentPosition = new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude())).title("Me");
@@ -301,7 +320,11 @@ public class PredefinedTrailTrainingProgramActivity extends TrailActivity implem
             map.moveCamera(center);
             map.animateCamera(zoom);
         } else {
-            map.addMarker(currentPosition);
+            if (lastMarker != null) {
+                lastMarker.remove();
+            }
+            map.addMarker(startMarker);
+            lastMarker = map.addMarker(currentPosition);
             drawPredefinedPath = false;
             traceRoute(waypoints);
             CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude()));
